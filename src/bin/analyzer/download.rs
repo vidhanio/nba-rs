@@ -3,19 +3,18 @@ use std::time::Duration;
 use anyhow::Result;
 use futures::prelude::*;
 use log::info;
-use nba_api::{NBAHttp, NBAResponse, NBAStatsHttp};
 use tokio::{
     fs::{self, File},
     io::AsyncWriteExt,
 };
 
-use crate::RESPONSES_DIR;
+use crate::{nba_request, RESPONSES_DIR};
 
 async fn get_response(endpoint: &str) -> Result<String> {
-    NBAStatsHttp
-        .send_api_request(&endpoint.to_ascii_lowercase(), &[], None, None, None, None)
+    nba_request(&endpoint.to_ascii_lowercase(), &[])
+        .await?
+        .text()
         .await
-        .map(|r| r.response().to_owned())
         .map_err(Into::into)
 }
 

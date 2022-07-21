@@ -8,6 +8,9 @@ mod filter_invalid;
 mod missing_params;
 
 use anyhow::Result;
+use nba_api::NBAClient;
+use once_cell::sync::Lazy;
+use reqwest::Response;
 
 #[macro_export]
 macro_rules! regex {
@@ -18,8 +21,10 @@ macro_rules! regex {
 }
 
 macro_rules! dirs {
-    ($(static $name:ident = $($path:tt) / *;)+) => {$(
-        static $name: ::once_cell::sync::Lazy<::std::path::PathBuf> = ::once_cell::sync::Lazy::new(|| {
+    {$(
+        $vis:vis static $name:ident = $($path:tt) / *;
+    )+} => {$(
+        $vis static $name: ::once_cell::sync::Lazy<::std::path::PathBuf> = ::once_cell::sync::Lazy::new(|| {
             let path = ::std::path::PathBuf::new()
                 $(.join(&*$path))*;
 
@@ -262,6 +267,15 @@ dirs! {
     static PARAMS_NOT_FOUND_DIR = ANALYSIS_DIR / "2_params_not_found";
 
     static JSON_DIR = ANALYSIS_DIR / "3_json";
+}
+
+static CLIENT: Lazy<NBAClient> = Lazy::new(NBAClient::new);
+
+async fn nba_request(endpoint: &str, params: &[(&str, &str)]) -> Result<Response> {
+    CLIENT
+        .send_request(endpoint, params)
+        .await
+        .map_err(Into::into)
 }
 
 #[tokio::main]
