@@ -1,9 +1,8 @@
 pub mod endpoints;
-pub mod parameters;
 
 use crate::{library::NBAResponse, NBAHttp, Result};
 use reqwest::{
-    header::{HeaderMap, ACCEPT, ACCEPT_ENCODING, CONNECTION, HOST, REFERER, USER_AGENT},
+    header::{HeaderMap, REFERER},
     StatusCode, Url,
 };
 

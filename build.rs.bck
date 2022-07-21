@@ -22,8 +22,10 @@ struct AnalyzedEndpoint {
 }
 
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
 enum Status {
     Success,
+    Invalid,
     Deprecated,
 }
 
