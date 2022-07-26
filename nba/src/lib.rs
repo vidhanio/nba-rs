@@ -34,11 +34,11 @@ pub enum Error {
 pub type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[derive(Debug)]
-pub struct NBAClient {
+pub struct NbaClient {
     client: Client,
 }
 
-impl NBAClient {
+impl NbaClient {
     #[must_use]
     pub fn new() -> Self {
         Self {
@@ -51,20 +51,25 @@ impl NBAClient {
     /// # Errors
     ///
     /// this function will error if it fails to send the request.
-    pub async fn send_request(
-        &self,
-        endpoint: &str,
-        parameters: &[(&str, &str)],
-    ) -> Result<Response> {
+    pub async fn send_request<'a, I, S, R>(&self, endpoint: &str, properties: I) -> Result<Response>
+    where
+        I: IntoIterator<Item = &'a (S, R)> + Send + Sync,
+        S: AsRef<str> + 'a,
+        R: AsRef<str> + 'a,
+    {
         let base_url = format!("https://stats.nba.com/stats/{endpoint}");
 
-        let mut parameters = parameters.to_owned();
-        parameters.sort_by_key(|&(k, _)| k);
+        let mut properties = properties
+            .into_iter()
+            .map(|(k, v)| (k.as_ref().to_owned(), v.as_ref().to_owned()))
+            .collect::<Vec<_>>();
+
+        properties.sort_unstable_by(|(k1, _), (k2, _)| k1.cmp(k2));
 
         let request = self
             .client
             .get(&base_url)
-            .query(&parameters)
+            .query(&properties)
             .headers(
                 [(REFERER, "https://stats.nba.com/")]
                     .into_iter()
@@ -83,7 +88,7 @@ impl NBAClient {
     }
 }
 
-impl Default for NBAClient {
+impl Default for NbaClient {
     fn default() -> Self {
         Self::new()
     }
