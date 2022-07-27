@@ -7,6 +7,7 @@ pub mod consts;
 use std::collections::{HashMap, HashSet};
 
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[macro_export]
 macro_rules! regex {
@@ -27,6 +28,37 @@ pub enum Analysis {
 }
 
 impl Analysis {
+    #[must_use]
+    pub fn map_valid<F>(self, f: F) -> Self
+    where
+        F: FnOnce(ValidAnalysis) -> Self,
+    {
+        match self {
+            Self::Valid(analysis) => f(analysis),
+            other => other,
+        }
+    }
+
+    #[must_use]
+    pub fn into_valid(self) -> Self {
+        Self::Valid(self.into())
+    }
+
+    #[must_use]
+    pub fn into_invalid(self) -> Self {
+        Self::Invalid(self.into())
+    }
+
+    #[must_use]
+    pub fn into_deprecated(self) -> Self {
+        Self::Deprecated(self.into())
+    }
+
+    #[must_use]
+    pub fn into_unknown(self) -> Self {
+        Self::Unknown(self.into())
+    }
+
     #[must_use]
     pub fn endpoint(&self) -> &str {
         match self {
@@ -408,7 +440,21 @@ impl Parameter {
 pub enum Type {
     String,
     Number,
-    Boolean,
+    Bool,
     Object,
     Array,
+    Null,
+}
+
+impl From<Value> for Type {
+    fn from(value: Value) -> Self {
+        match value {
+            Value::String(_) => Self::String,
+            Value::Number(_) => Self::Number,
+            Value::Bool(_) => Self::Bool,
+            Value::Object(_) => Self::Object,
+            Value::Array(_) => Self::Array,
+            Value::Null => Self::Null,
+        }
+    }
 }

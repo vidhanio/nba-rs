@@ -20,7 +20,7 @@ pub async fn deserialize_from(
         DataSource::EndpointList(endpoints) => {
             Box::pin(stream::iter(endpoints.iter().copied()).map(Ok).and_then(
                 |endpoint| async move {
-                    info!("getting endpoint: {endpoint}");
+                    info!("getting endpoint from api: {endpoint}");
 
                     utils::get_response_text::<&str, &str>(endpoint, &[])
                         .await
@@ -41,16 +41,27 @@ pub async fn deserialize_from(
             })
             .map_or_else::<Pin<Box<dyn Stream<Item = _>>>, _, _>(
                 |e| Box::pin(stream::once(async { Err(e) })),
-                |a| Box::pin(stream::iter(a.into_values()).map(Ok)),
+                |a| {
+                    Box::pin(stream::iter(a.into_values()).map(|a| {
+                        info!("getting endpoint from json: {}", a.endpoint());
+
+                        Ok(a)
+                    }))
+                },
             ),
     }
 }
 
 #[must_use]
 pub fn deprecation(analysis: Analysis) -> Analysis {
-    if utils::is_deprecated(analysis.response().unwrap_or_default()) {
-        Analysis::Deprecated(analysis.into())
+    let response = match analysis.response() {
+        Some(response) => response,
+        None => return analysis.into_deprecated(),
+    };
+
+    if utils::is_deprecated(response) {
+        analysis.into_deprecated()
     } else {
-        analysis
+        analysis.into_valid()
     }
 }
