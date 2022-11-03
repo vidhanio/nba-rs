@@ -1,9 +1,9 @@
 pub mod params;
 mod utils;
 
-use futures::prelude::*;
+use futures::{prelude::*, stream::BoxStream};
 use log::info;
-use std::{collections::HashMap, path::Path, pin::Pin};
+use std::{collections::HashMap, path::Path};
 use tokio::fs;
 
 use crate::{Analysis, UnknownAnalysis};
@@ -11,6 +11,10 @@ use crate::{Analysis, UnknownAnalysis};
 pub enum DataSource<'a> {
     EndpointList(&'a [&'a str]),
     JsonFilepath(&'a Path),
+}
+
+trait X {
+    type T;
 }
 
 pub async fn deserialize_from(
@@ -22,7 +26,7 @@ pub async fn deserialize_from(
                 |endpoint| async move {
                     info!("getting endpoint from api: {endpoint}");
 
-                    utils::get_response_text::<&str, &str>(endpoint, &[])
+                    utils::get_response_text(endpoint, [])
                         .await
                         .map(|response| {
                             Analysis::Unknown(UnknownAnalysis {
@@ -39,7 +43,7 @@ pub async fn deserialize_from(
             .and_then(|analysis| {
                 serde_json::from_str::<HashMap<String, Analysis>>(&analysis).map_err(Into::into)
             })
-            .map_or_else::<Pin<Box<dyn Stream<Item = _>>>, _, _>(
+            .map_or_else::<BoxStream<_>, _, _>(
                 |e| Box::pin(stream::once(async { Err(e) })),
                 |a| {
                     Box::pin(stream::iter(a.into_values()).map(|a| {

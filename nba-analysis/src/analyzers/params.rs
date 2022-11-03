@@ -1,10 +1,9 @@
 use std::collections::HashMap;
 
-use log::info;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::{regex, Analysis, ValidAnalysis};
+use crate::{regex, Analysis, Parameter, ValidAnalysis};
 
 #[must_use]
 pub fn from_json(analysis: Analysis) -> Analysis {
@@ -29,7 +28,10 @@ pub fn from_json(analysis: Analysis) -> Analysis {
         let mut parameters = analysis.parameters.unwrap_or_default();
 
         new_params.for_each(|(k, v)| {
-            parameters.entry(k).or_default().required = Some(!v.is_null());
+            parameters
+                .entry(k.clone())
+                .or_insert_with(|| Parameter::new(&k))
+                .required = Some(!v.is_null());
         });
 
         Analysis::Valid(ValidAnalysis {
@@ -55,7 +57,10 @@ pub fn required(analysis: Analysis) -> Analysis {
         let mut parameters = analysis.parameters.unwrap_or_default();
 
         required_params.for_each(|param| {
-            parameters.entry(param.to_owned()).or_default().required = Some(true);
+            parameters
+                .entry(param.to_owned())
+                .or_insert_with(|| Parameter::new(param))
+                .required = Some(true);
         });
 
         Analysis::Valid(ValidAnalysis {
@@ -64,4 +69,8 @@ pub fn required(analysis: Analysis) -> Analysis {
             ..analysis
         })
     })
+}
+
+pub async fn nullable(analysis: Analysis) -> Analysis {
+    todo!()
 }

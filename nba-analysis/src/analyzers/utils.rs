@@ -8,15 +8,14 @@ use crate::consts::CLIENT;
 /// # Errors
 ///
 /// This function will return an error if the request fails.
-pub async fn get_response_text<S, R>(endpoint: &str, params: &[(S, R)]) -> Result<String>
+pub async fn get_response_text<'a, I>(endpoint: &str, params: I) -> Result<String>
 where
-    S: AsRef<str> + Send + Sync,
-    R: AsRef<str> + Send + Sync,
+    I: IntoIterator<Item = (&'a str, &'a str)> + Send + Sync,
 {
     time::sleep(Duration::from_secs(1)).await;
 
     CLIENT
-        .send_request(&endpoint.to_ascii_lowercase(), params.iter())
+        .send_request(&endpoint.to_ascii_lowercase(), params)
         .await?
         .text()
         .await

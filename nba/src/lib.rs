@@ -4,6 +4,7 @@
 #![warn(clippy::pedantic)]
 #![warn(clippy::nursery)]
 #![warn(missing_debug_implementations)]
+#![warn(missing_copy_implementations)]
 // #![warn(missing_docs)]
 
 use reqwest::{
@@ -13,8 +14,10 @@ use reqwest::{
 use thiserror::Error;
 
 pub(crate) mod endpoints;
+pub mod parameters;
 
-/// An error which encompasses all possible errors which may occur when using the nba api.
+/// An error which encompasses all possible errors which may occur when using
+/// the nba api.
 #[derive(Debug, Error)]
 pub enum Error {
     /// A variant which contains a [`reqwest::Error`]
@@ -51,28 +54,22 @@ impl NbaClient {
     /// # Errors
     ///
     /// this function will error if it fails to send the request.
-    pub async fn send_request<'a, I, S, R>(&self, endpoint: &str, properties: I) -> Result<Response>
+    pub async fn send_request<'a, I>(&self, endpoint: &str, parameters: I) -> Result<Response>
     where
-        I: IntoIterator<Item = &'a (S, R)> + Send + Sync,
-        S: AsRef<str> + 'a,
-        R: AsRef<str> + 'a,
+        I: IntoIterator<Item = (&'a str, &'a str)> + Send + Sync,
     {
         let base_url = format!("https://stats.nba.com/stats/{endpoint}");
 
-        let mut properties = properties
-            .into_iter()
-            .map(|(k, v)| (k.as_ref().to_owned(), v.as_ref().to_owned()))
-            .collect::<Vec<_>>();
+        let mut parameters = parameters.into_iter().collect::<Vec<_>>();
 
-        properties.sort_unstable_by(|(k1, _), (k2, _)| k1.cmp(k2));
+        parameters.sort_unstable_by(|(k1, _), (k2, _)| k1.cmp(k2));
 
         let request = self
             .client
             .get(&base_url)
-            .query(&properties)
+            .query(&parameters)
             .headers(
-                [(REFERER, "https://stats.nba.com/")]
-                    .into_iter()
+                std::iter::once((REFERER, "https://stats.nba.com/"))
                     .map(|(k, v)| {
                         (
                             k,

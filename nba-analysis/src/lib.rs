@@ -4,7 +4,10 @@
 pub mod analyzers;
 pub mod consts;
 
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    future::Future,
+};
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -35,6 +38,17 @@ impl Analysis {
     {
         match self {
             Self::Valid(analysis) => f(analysis),
+            other => other,
+        }
+    }
+
+    pub async fn async_map_valid<F, Fut>(self, f: F) -> Self
+    where
+        F: FnOnce(ValidAnalysis) -> Fut,
+        Fut: Future<Output = Self>,
+    {
+        match self {
+            Self::Valid(analysis) => f(analysis).await,
             other => other,
         }
     }
@@ -414,8 +428,9 @@ impl From<DeprecatedAnalysis> for UnknownAnalysis {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Default)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Parameter {
+    pub name: String,
     pub required: Option<bool>,
     pub nullable: Option<bool>,
     pub pattern: Option<String>,
@@ -425,8 +440,9 @@ pub struct Parameter {
 
 impl Parameter {
     #[must_use]
-    pub const fn new() -> Self {
+    pub fn new(name: &str) -> Self {
         Self {
+            name: name.to_owned(),
             required: None,
             nullable: None,
             pattern: None,

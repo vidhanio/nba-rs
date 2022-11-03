@@ -1,13 +1,12 @@
 mod playercareerstats;
 
 pub trait ResultSet {
+    const ENDPOINT: &'static str;
     const HEADERS: &'static [&'static str];
 
     type Row;
 
-    fn row_set(&self) -> &[Self::Row];
+    fn rows(&self) -> &[Self::Row];
 
-    fn get_row(&self, index: usize) -> Option<&Self::Row> {
-        self.row_set().get(index)
-    }
+    fn set_rows(&mut self, rows: &[Self::Row]);
 }
