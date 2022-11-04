@@ -1,0 +1,146 @@
+use crate::fields::{LeagueId, PerModeSimple, PerModeStatSimple, SeasonType, YesNo};
+
+crate::endpoint! {
+    AllTimeLeadersGrids("alltimeleadersgrids") {
+        #[serde(rename = "LeagueID")]
+        league_id: LeagueId,
+        per_mode: PerModeSimple,
+        season_type: SeasonType,
+        #[serde(with = "crate::sd::u32str")]
+        top_x: u32,
+    } => {
+        gp_leaders: GpLeadersRow("GPLeaders") {
+            player_id: u32,
+            player_name: String,
+            gp: u32,
+            gp_rank: u32,
+            is_active_flag: YesNo,
+        },
+        pts_leaders: PtsLeadersRow("PTSLeaders") {
+            player_id: u32,
+            player_name: String,
+            pts: PerModeStatSimple,
+            pts_rank: u32,
+            is_active_flag: YesNo,
+        },
+        ast_leaders: AstLeadersRow("ASTLeaders") {
+            player_id: u32,
+            player_name: String,
+            ast: PerModeStatSimple,
+            ast_rank: u32,
+            is_active_flag: YesNo,
+        },
+        stl_leaders: StlLeadersRow("STLLeaders") {
+            player_id: u32,
+            player_name: String,
+            stl: PerModeStatSimple,
+            stl_rank: u32,
+            is_active_flag: YesNo,
+        },
+        oreb_leaders: OrebLeadersRow("OREBLeaders") {
+            player_id: u32,
+            player_name: String,
+            oreb: PerModeStatSimple,
+            oreb_rank: u32,
+            is_active_flag: YesNo,
+        },
+        dreb_leaders: DrebLeadersRow("DREBLeaders") {
+            player_id: u32,
+            player_name: String,
+            dreb: PerModeStatSimple,
+            dreb_rank: u32,
+            is_active_flag: YesNo,
+        },
+        reb_leaders: RebLeadersRow("REBLeaders") {
+            player_id: u32,
+            player_name: String,
+            reb: PerModeStatSimple,
+            reb_rank: u32,
+            is_active_flag: YesNo,
+        },
+        blk_leaders: BlkLeadersRow("BLKLeaders") {
+            player_id: u32,
+            player_name: String,
+            blk: PerModeStatSimple,
+            blk_rank: u32,
+            is_active_flag: YesNo,
+        },
+        fgm_leaders: FgmLeadersRow("FGMLeaders") {
+            player_id: u32,
+            player_name: String,
+            fgm: PerModeStatSimple,
+            fgm_rank: u32,
+            is_active_flag: YesNo,
+        },
+        fga_leaders: FgaLeadersRow("FGALeaders") {
+            player_id: u32,
+            player_name: String,
+            fga: PerModeStatSimple,
+            fga_rank: u32,
+            is_active_flag: YesNo,
+        },
+        fg_pct_leaders: FgPctLeadersRow("FG_PCTLeaders") {
+            player_id: u32,
+            player_name: String,
+            fg_pct: f64,
+            fg_pct_rank: u32,
+            is_active_flag: YesNo,
+        },
+        tov_leaders: TovLeadersRow("TOVLeaders") {
+            player_id: u32,
+            player_name: String,
+            tov: PerModeStatSimple,
+            tov_rank: u32,
+            is_active_flag: YesNo,
+        },
+        fg3m_leaders: Fg3mLeadersRow("FG3MLeaders") {
+            player_id: u32,
+            player_name: String,
+            fg3m: PerModeStatSimple,
+            fg3m_rank: u32,
+            is_active_flag: YesNo,
+        },
+        fg3a_leaders: Fg3aLeadersRow("FG3ALeaders") {
+            player_id: u32,
+            player_name: String,
+            fg3a: PerModeStatSimple,
+            fg3a_rank: u32,
+            is_active_flag: YesNo,
+        },
+        fg3_pct_leaders: Fg3PctLeadersRow("FG3_PCTLeaders") {
+            player_id: u32,
+            player_name: String,
+            fg3_pct: f64,
+            fg3_pct_rank: u32,
+            is_active_flag: YesNo,
+        },
+        pf_leaders: PfLeadersRow("PFLeaders") {
+            player_id: u32,
+            player_name: String,
+            pf: PerModeStatSimple,
+            pf_rank: u32,
+            is_active_flag: YesNo,
+        },
+        ftm_leaders: FtmLeadersRow("FTMLeaders") {
+            player_id: u32,
+            player_name: String,
+            ftm: PerModeStatSimple,
+            ftm_rank: u32,
+            is_active_flag: YesNo,
+        },
+        fta_leaders: FtaLeadersRow("FTALeaders") {
+            player_id: u32,
+            player_name: String,
+            fta: PerModeStatSimple,
+            fta_rank: u32,
+            is_active_flag: YesNo,
+        },
+        ft_pct_leaders: FtPctLeadersRow("FT_PCTLeaders") {
+            player_id: u32,
+            player_name: String,
+            ft_pct: f64,
+            ft_pct_rank: u32,
+            is_active_flag: YesNo,
+        },
+    }
+}

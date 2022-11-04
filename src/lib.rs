@@ -1,92 +1,60 @@
-//! a crate for the nba api.
+//! A crate for the NBA Stats API.
 
 #![forbid(unsafe_code)]
 #![warn(clippy::pedantic)]
 #![warn(clippy::nursery)]
 #![warn(missing_debug_implementations)]
 #![warn(missing_copy_implementations)]
-// #![warn(missing_docs)]
+#![allow(clippy::module_name_repetitions)]
+#![warn(missing_docs)]
 
+use macros::endpoint;
+use once_cell::sync::Lazy;
 use reqwest::{
-    header::{HeaderValue, REFERER},
-    Client, Response,
+    header::{HeaderMap, HeaderValue, REFERER},
+    Client,
 };
 use thiserror::Error;
 
-pub(crate) mod endpoints;
-pub mod parameters;
+pub mod fields;
+mod macros;
+mod sd;
+pub mod stats;
+
+pub use stats::{
+    response::{
+        basic::{BasicResponse, BasicResultSet},
+        Response,
+    },
+    Endpoint,
+};
+
+/// The default [`reqwest::Client`] used by [`Endpoint`]s.
+///
+/// This client is configured to use the NBA Stats API's referer by default.
+pub static CLIENT: Lazy<Client> = Lazy::new(|| {
+    let mut headers = HeaderMap::new();
+    headers.insert(REFERER, HeaderValue::from_static("https://stats.nba.com/"));
+
+    Client::builder()
+        .default_headers(headers)
+        .build()
+        .expect("static client should build")
+});
 
 /// An error which encompasses all possible errors which may occur when using
-/// the nba api.
+/// this crate.
 #[derive(Debug, Error)]
 pub enum Error {
-    /// A variant which contains a [`reqwest::Error`]
-    #[error("{0}")]
+    /// A [`reqwest::Error`] occurred.
+    #[error("a reqwest error occurred")]
     Reqwest(#[from] reqwest::Error),
 
-    #[error("{0}")]
-    /// A variant which contains a [`serde_json::Error`]
+    /// A [`serde_json::Error`] occurred.
+    #[error("a serde_json error occurred")]
     Serde(#[from] serde_json::Error),
-
-    /// A variant which contains a [`reqwest::header::InvalidHeaderValue`]
-    #[error("{0}")]
-    InvalidHeaderValue(#[from] reqwest::header::InvalidHeaderValue),
 }
 
-/// A result alias which may be useful when working with this crate.
+/// A convenience [`std::result::Result`] which uses a [`enum@crate::Error`] as
+/// its error type.
 pub type Result<T, E = Error> = std::result::Result<T, E>;
-
-#[derive(Debug)]
-pub struct NbaClient {
-    client: Client,
-}
-
-impl NbaClient {
-    #[must_use]
-    pub fn new() -> Self {
-        Self {
-            client: Client::new(),
-        }
-    }
-
-    /// sends a request to the nba api and returns the response.
-    ///
-    /// # Errors
-    ///
-    /// this function will error if it fails to send the request.
-    pub async fn send_request<'a, I>(&self, endpoint: &str, parameters: I) -> Result<Response>
-    where
-        I: IntoIterator<Item = (&'a str, &'a str)> + Send + Sync,
-    {
-        let base_url = format!("https://stats.nba.com/stats/{endpoint}");
-
-        let mut parameters = parameters.into_iter().collect::<Vec<_>>();
-
-        parameters.sort_unstable_by(|(k1, _), (k2, _)| k1.cmp(k2));
-
-        let request = self
-            .client
-            .get(&base_url)
-            .query(&parameters)
-            .headers(
-                std::iter::once((REFERER, "https://stats.nba.com/"))
-                    .map(|(k, v)| {
-                        (
-                            k,
-                            v.parse::<HeaderValue>()
-                                .expect("header value should be valid"),
-                        )
-                    })
-                    .collect(),
-            )
-            .build()?;
-
-        self.client.execute(request).await.map_err(Into::into)
-    }
-}
-
-impl Default for NbaClient {
-    fn default() -> Self {
-        Self::new()
-    }
-}
