@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::Response;
+use crate::{serde::VecOrSingle, Response};
 
-pub type BasicResponse = Response<serde_json::Map<String, serde_json::Value>, Vec<BasicResultSet>>;
+pub type BasicResponse =
+    Response<serde_json::Map<String, serde_json::Value>, VecOrSingle<BasicResultSet>>;
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

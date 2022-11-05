@@ -37,7 +37,7 @@ async fn main() -> color_eyre::Result<()> {
 
     let mut s = "\n".to_owned();
 
-    resp.result_sets.into_iter().try_for_each(|rs| {
+    Vec::from(resp.result_sets).into_iter().try_for_each(|rs| {
         if rs.row_set.is_empty() {
             return Ok(());
         }

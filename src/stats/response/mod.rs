@@ -14,5 +14,6 @@ pub struct Response<P, R> {
     pub resource: String,
 
     /// The result sets returned.
+    #[serde(alias = "resultSet")]
     pub result_sets: R,
 }

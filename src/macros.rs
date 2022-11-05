@@ -109,7 +109,7 @@ macro_rules! endpoint {
             where
                 D: ::serde::Deserializer<'de>,
             {
-                let raw = Vec::<$crate::BasicResultSet>::deserialize(deserializer)?;
+                let raw = $crate::serde::VecOrSingle::<$crate::BasicResultSet>::deserialize(deserializer)?.into_vec();
 
                 raw.try_into().map_err(::serde::de::Error::custom)
             }

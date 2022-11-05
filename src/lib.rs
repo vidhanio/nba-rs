@@ -17,9 +17,8 @@ use reqwest::{
 };
 use thiserror::Error;
 
-pub mod fields;
 mod macros;
-mod sd;
+mod serde;
 pub mod stats;
 
 pub use stats::{
