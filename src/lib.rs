@@ -31,7 +31,11 @@ pub use stats::{
 
 use std::fmt::Debug;
 
-/// debug an endpoint
+/// Debug an endpoint.
+///
+/// # Errors
+///
+/// This function will error if sending the request fails.
 pub async fn debug<E>(endpoint: &E) -> Result<()>
 where
     E: Endpoint<Parameters = E> + Sync + Send + Debug,

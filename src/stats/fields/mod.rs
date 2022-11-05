@@ -3,12 +3,7 @@
 
 #![allow(missing_docs)]
 
-use std::fmt::{self, Debug, Formatter};
-
-use serde::{
-    de::{self, Visitor},
-    Deserialize, Deserializer, Serialize, Serializer,
-};
+use serde::{Deserialize, Serialize};
 
 pub mod per_mode;
 
