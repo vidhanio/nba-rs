@@ -26,7 +26,9 @@ fn to_type(header: &str, val: serde_json::Value) -> &'static str {
 async fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
 
-    let url = env::args().nth(1).ok_or(eyre!("args should have a url"))?;
+    let mut args = env::args();
+    let name = args.nth(1).ok_or_else(|| eyre!("missing argument: name"))?;
+    let url = args.next().ok_or_else(|| eyre!("missing argument: url"))?;
 
     let resp = nba::CLIENT
         .get(url)
@@ -67,7 +69,7 @@ async fn main() -> color_eyre::Result<()> {
 
     write!(s, "    ")?;
 
-    fs::write("tmp/analysis.txt", s).await?;
+    fs::write(format!("tmp/{name}.txt"), s).await?;
 
     Ok(())
 }

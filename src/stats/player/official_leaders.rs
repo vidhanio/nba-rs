@@ -312,7 +312,7 @@ pub mod fields {
     }
 }
 
-use fields::*;
+use fields::{LeagueId, PerMode, Scope, Season, SeasonType, StatCategory, YesOrNo};
 
 crate::endpoint! {
     OfficialLeaders("leagueleaders") {
@@ -348,8 +348,11 @@ crate::endpoint! {
             stl: f64,
             blk: f64,
             tov: f64,
+            pf: Option<f64>,
             pts: f64,
             eff: f64,
+            ast_tov: Option<f64>,
+            stl_tov: Option<f64>,
         },
     }
 }
