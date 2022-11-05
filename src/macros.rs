@@ -17,7 +17,7 @@ macro_rules! endpoint {
         }
     } => {
         #[allow(missing_copy_implementations)]
-        #[derive(Clone, Debug, ::serde::Serialize, ::serde::Deserialize)]
+        #[derive(Clone, Debug, Default, ::serde::Serialize, ::serde::Deserialize)]
         #[serde(deny_unknown_fields)]
         #[serde(rename_all = "PascalCase")]
         pub struct $name {
@@ -27,11 +27,17 @@ macro_rules! endpoint {
             ),*
         }
 
-        #[::async_trait::async_trait]
         impl $crate::Endpoint for $name {
-            const ENDPOINT: &'static str = $endpoint;
-
+            type Parameters = Self;
             type ResultSets = ResultSets;
+
+            fn endpoint(&self) -> ::std::borrow::Cow<'static, str> {
+                $endpoint.into()
+            }
+
+            fn parameters(&self) -> &Self::Parameters {
+                self
+            }
         }
 
         $(
@@ -62,7 +68,7 @@ macro_rules! endpoint {
                     .into_iter()
                     .try_fold(
                         Self::default(),
-                        |mut result_sets, rs| {
+                        |#[allow(unused_mut)] mut result_sets, rs| {
                             match rs.name.as_str() {
                                 $(
                                     $rl => {
@@ -89,7 +95,7 @@ macro_rules! endpoint {
                                         })
                                     }
                                 )*
-                                _ => return Err(format!("unknown result set: {}", rs.name)),
+                                _ => Err(format!("unknown result set: {}", rs.name)),
                             }?;
 
                             Ok(result_sets)

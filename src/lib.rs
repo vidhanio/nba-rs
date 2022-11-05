@@ -7,6 +7,7 @@
 #![warn(missing_copy_implementations)]
 #![allow(clippy::module_name_repetitions)]
 #![warn(missing_docs)]
+#![feature(associated_type_defaults)]
 
 use macros::endpoint;
 use once_cell::sync::Lazy;
@@ -22,12 +23,28 @@ mod sd;
 pub mod stats;
 
 pub use stats::{
+    endpoint::Endpoint,
     response::{
         basic::{BasicResponse, BasicResultSet},
         Response,
     },
-    Endpoint,
 };
+
+use std::fmt::Debug;
+
+/// debug an endpoint
+pub async fn debug<E>(endpoint: &E) -> Result<()>
+where
+    E: Endpoint<Parameters = E> + Sync + Send + Debug,
+    E::ResultSets: Debug,
+{
+    println!("{endpoint:#?}");
+
+    println!("{:#?}", endpoint.send_basic().await?);
+    println!("{:#?}", endpoint.send().await?);
+
+    Ok(())
+}
 
 /// The default [`reqwest::Client`] used by [`Endpoint`]s.
 ///

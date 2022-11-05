@@ -3,7 +3,7 @@
 macro_rules! teams {
     {
         ($abbri:ident, $namei:ident) => {
-            $($team:ident => ($abbr:literal, $name:literal)),* $(,)?
+            $($team:ident => ($abbr:literal, $name:literal) => ($($div:ident, $conf:ident)?)),* $(,)?
         }
     } => {
         #[derive(Clone, Copy, Debug, Default, ::serde::Serialize, ::serde::Deserialize)]
@@ -13,6 +13,44 @@ macro_rules! teams {
                 #[serde(rename = $abbr)]
                 $team,
             )*
+        }
+
+        impl $abbri {
+            #[must_use]
+            pub const fn abbreviation(self) -> &'static str {
+                match self {
+                    $(
+                        Self::$team => $abbr,
+                    )*
+                }
+            }
+
+            #[must_use]
+            pub const fn name(self) -> &'static str {
+                match self {
+                    $(
+                        Self::$team => $name,
+                    )*
+                }
+            }
+
+            #[must_use]
+            pub const fn division(self) -> Option<$crate::fields::Division> {
+                match self {
+                    $(
+                        Self::$team => divconf!(@DIV $($div)?),
+                    )*
+                }
+            }
+
+            #[must_use]
+            pub const fn conference(self) -> Option<$crate::fields::Conference> {
+                match self {
+                    $(
+                        Self::$team => divconf!(@CONF $($conf)?),
+                    )*
+                }
+            }
         }
 
         impl ::std::fmt::Display for $abbri {
@@ -32,6 +70,44 @@ macro_rules! teams {
                 #[serde(rename = $name)]
                 $team,
             )*
+        }
+
+        impl $namei {
+            #[must_use]
+            pub const fn abbreviation(self) -> &'static str {
+                match self {
+                    $(
+                        Self::$team => $abbr,
+                    )*
+                }
+            }
+
+            #[must_use]
+            pub const fn name(self) -> &'static str {
+                match self {
+                    $(
+                        Self::$team => $name,
+                    )*
+                }
+            }
+
+            #[must_use]
+            pub const fn division(self) -> Option<$crate::fields::Division> {
+                match self {
+                    $(
+                        Self::$team => divconf!(@DIV $($div)?),
+                    )*
+                }
+            }
+
+            #[must_use]
+            pub const fn conference(self) -> Option<$crate::fields::Conference> {
+                match self {
+                    $(
+                        Self::$team => divconf!(@CONF $($conf)?),
+                    )*
+                }
+            }
         }
 
         impl ::std::fmt::Display for $namei {
@@ -66,56 +142,53 @@ macro_rules! teams {
     };
 }
 
-teams! {
-    (NbaTeamAbbreviation, NbaTeamName) => {
-        Total => ("TOT", "Total"),
-        AtlantaHawks => ("ATL", "Atlanta Hawks"),
-        BostonCeltics => ("BOS", "Boston Celtics"),
-        BrooklynNets => ("BRK", "Brooklyn Nets"),
-        CharlotteHornets => ("CHO", "Charlotte Hornets"),
-        ChicagoBulls => ("CHI", "Chicago Bulls"),
-        ClevelandCavaliers => ("CLE", "Cleveland Cavaliers"),
-        DallasMavericks => ("DAL", "Dallas Mavericks"),
-        DenverNuggets => ("DEN", "Denver Nuggets"),
-        DetroitPistons => ("DET", "Detroit Pistons"),
-        GoldenStateWarriors => ("GSW", "Golden State Warriors"),
-        HoustonRockets => ("HOU", "Houston Rockets"),
-        IndianaPacers => ("IND", "Indiana Pacers"),
-        LosAngelesClippers => ("LAC", "Los Angeles Clippers"),
-        LosAngelesLakers => ("LAL", "Los Angeles Lakers"),
-        MemphisGrizzlies => ("MEM", "Memphis Grizzlies"),
-        MiamiHeat => ("MIA", "Miami Heat"),
-        MilwaukeeBucks => ("MIL", "Milwaukee Bucks"),
-        MinnesotaTimberwolves => ("MIN", "Minnesota Timberwolves"),
-        NewOrleansPelicans => ("NOP", "New Orleans Pelicans"),
-        NewYorkKnicks => ("NYK", "New York Knicks"),
-        OklahomaCityThunder => ("OKC", "Oklahoma City Thunder"),
-        OrlandoMagic => ("ORL", "Orlando Magic"),
-        Philadelphia76ers => ("PHI", "Philadelphia 76ers"),
-        PhoenixSuns => ("PHX", "Phoenix Suns"),
-        PortlandTrailBlazers => ("POR", "Portland Trail Blazers"),
-        SacramentoKings => ("SAC", "Sacramento Kings"),
-        SanAntonioSpurs => ("SAS", "San Antonio Spurs"),
-        TorontoRaptors => ("TOR", "Toronto Raptors"),
-        UtahJazz => ("UTA", "Utah Jazz"),
-        WashingtonWizards => ("WAS", "Washington Wizards"),
-    }
+macro_rules! divconf {
+    (@DIV $div:ident) => {
+        Some($crate::fields::Division::$div)
+    };
+    (@CONF $conf:ident) => {
+        Some($crate::fields::Conference::$conf)
+    };
+    (@DIV) => {
+        None
+    };
+    (@CONF) => {
+        None
+    };
 }
 
 teams! {
-    (WnbaTeamAbbreviation, WnbaTeamName) => {
-        Total => ("TOT", "Total"),
-        AtlantaDream => ("ATL", "Atlanta Dream"),
-        ChicagoSky => ("CHI", "Chicago Sky"),
-        ConnecticutSun => ("CONN", "Connecticut Sun"),
-        DallasWings => ("DAL", "Dallas Wings"),
-        IndianaFever => ("IND", "Indiana Fever"),
-        LasVegasAces => ("LV", "Las Vegas Aces"),
-        LosAngelesSparks => ("LA", "Los Angeles Sparks"),
-        MinnesotaLynx => ("MIN", "Minnesota Lynx"),
-        NewYorkLiberty => ("NY", "New York Liberty"),
-        PhoenixMercury => ("PHX", "Phoenix Mercury"),
-        SeattleStorm => ("SEA", "Seattle Storm"),
-        WashingtonMystics => ("WSH", "Washington Mystics"),
+    (NbaTeamAbbreviation, NbaTeamName) => {
+        Total => ("TOT", "Total") => (),
+        AtlantaHawks => ("ATL", "Atlanta Hawks") => (Southeast, East),
+        BostonCeltics => ("BOS", "Boston Celtics") => (Atlantic, East),
+        BrooklynNets => ("BRK", "Brooklyn Nets") => (Atlantic, East),
+        CharlotteHornets => ("CHO", "Charlotte Hornets") => (Southeast, East),
+        ChicagoBulls => ("CHI", "Chicago Bulls") => (Central, East),
+        ClevelandCavaliers => ("CLE", "Cleveland Cavaliers") => (Central, East),
+        DallasMavericks => ("DAL", "Dallas Mavericks") => (Southwest, West),
+        DenverNuggets => ("DEN", "Denver Nuggets") => (Northwest, West),
+        DetroitPistons => ("DET", "Detroit Pistons") => (Central, East),
+        GoldenStateWarriors => ("GSW", "Golden State Warriors") => (Pacific, West),
+        HoustonRockets => ("HOU", "Houston Rockets") => (Southwest, West),
+        IndianaPacers => ("IND", "Indiana Pacers") => (Central, East),
+        LosAngelesClippers => ("LAC", "Los Angeles Clippers") => (Pacific, West),
+        LosAngelesLakers => ("LAL", "Los Angeles Lakers") => (Pacific, West),
+        MemphisGrizzlies => ("MEM", "Memphis Grizzlies") => (Southwest, West),
+        MiamiHeat => ("MIA", "Miami Heat") => (Southeast, East),
+        MilwaukeeBucks => ("MIL", "Milwaukee Bucks") => (Central, East),
+        MinnesotaTimberwolves => ("MIN", "Minnesota Timberwolves") => (Northwest, West),
+        NewOrleansPelicans => ("NOP", "New Orleans Pelicans") => (Southwest, West),
+        NewYorkKnicks => ("NYK", "New York Knicks") => (Atlantic, East),
+        OklahomaCityThunder => ("OKC", "Oklahoma City Thunder") => (Northwest, West),
+        OrlandoMagic => ("ORL", "Orlando Magic") => (Southeast, East),
+        Philadelphia76ers => ("PHI", "Philadelphia 76ers") => (Atlantic, East),
+        PhoenixSuns => ("PHX", "Phoenix Suns") => (Pacific, West),
+        PortlandTrailBlazers => ("POR", "Portland Trail Blazers") => (Northwest, West),
+        SacramentoKings => ("SAC", "Sacramento Kings") => (Pacific, West),
+        SanAntonioSpurs => ("SAS", "San Antonio Spurs") => (Southwest, West),
+        TorontoRaptors => ("TOR", "Toronto Raptors") => (Atlantic, East),
+        UtahJazz => ("UTA", "Utah Jazz") => (Northwest, West),
+        WashingtonWizards => ("WAS", "Washington Wizards") => (Southeast, East),
     }
 }

@@ -1,6 +1,7 @@
 use nba::{
     fields::{LeagueId, PerModeSimple, PlayerOrTeam, SeasonType},
-    stats::{assistleaders::AssistLeaders, Endpoint},
+    stats::AssistLeaders,
+    Endpoint,
 };
 
 #[tokio::main]
@@ -15,9 +16,5 @@ async fn main() -> color_eyre::Result<()> {
         season: 2021,
     };
 
-    println!("{:#?}", req.send().await?);
-
-    println!("{:#?}", req.send_basic().await?);
-
-    Ok(())
+    nba::debug(&req).await.map_err(Into::into)
 }

@@ -1,7 +1,7 @@
 use crate::fields::{
     team::{NbaTeamAbbreviation, NbaTeamName},
-    JerseyNumber, LeagueId, PerModeSimple, PerModeStatSimple, PlayerOrTeam, PlayerStat, Position,
-    SeasonType,
+    JerseyNumber, LeagueId, PerModeSimple, PerModeStatSimple, PlayerOrTeam, PlayerPosition,
+    PlayerStat, SeasonType,
 };
 
 crate::endpoint! {
@@ -22,7 +22,7 @@ crate::endpoint! {
             team_abbreviation: NbaTeamAbbreviation,
             team_name: NbaTeamName,
             jersey_num: PlayerStat<JerseyNumber>,
-            player_position: PlayerStat<Position>,
+            player_position: PlayerStat<PlayerPosition>,
             ast: PerModeStatSimple,
         },
     }

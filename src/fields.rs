@@ -5,7 +5,10 @@
 
 use std::fmt::{self, Debug, Formatter};
 
-use serde::{Deserialize, Serialize};
+use serde::{
+    de::{self, Visitor},
+    Deserialize, Deserializer, Serialize, Serializer,
+};
 
 pub mod team;
 
@@ -15,14 +18,11 @@ pub enum LeagueId {
     #[serde(rename = "00")]
     Nba,
 
-    #[serde(rename = "01")]
-    Aba,
+    #[serde(rename = "10")]
+    Wnba,
 
     #[serde(rename = "20")]
     GLeague,
-
-    #[serde(rename = "10")]
-    Wnba,
 }
 
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
@@ -54,9 +54,6 @@ pub enum SeasonType {
     #[serde(rename = "Regular Season")]
     RegularSeason,
 
-    #[serde(rename = "Pre Season")]
-    PreSeason,
-
     #[serde(rename = "Playoffs")]
     Playoffs,
 }
@@ -72,7 +69,7 @@ pub enum PlayerOrTeam {
 }
 
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
-pub enum YesNo {
+pub enum YesOrNo {
     #[default]
     #[serde(rename = "N")]
     No,
@@ -81,16 +78,16 @@ pub enum YesNo {
     Yes,
 }
 
-impl From<YesNo> for bool {
-    fn from(value: YesNo) -> Self {
+impl From<YesOrNo> for bool {
+    fn from(value: YesOrNo) -> Self {
         match value {
-            YesNo::No => false,
-            YesNo::Yes => true,
+            YesOrNo::No => false,
+            YesOrNo::Yes => true,
         }
     }
 }
 
-impl From<bool> for YesNo {
+impl From<bool> for YesOrNo {
     fn from(value: bool) -> Self {
         if value {
             Self::Yes
@@ -151,22 +148,28 @@ impl Default for PerModeStat36 {
 }
 
 #[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
-pub enum Position {
+pub enum PlayerPosition {
     #[default]
     #[serde(rename = "C")]
     Center,
 
+    #[serde(rename = "F")]
+    Forward,
+
+    #[serde(rename = "G")]
+    Guard,
+
     #[serde(rename = "C-F")]
     CenterForward,
 
-    #[serde(rename = "F")]
-    Forward,
+    #[serde(rename = "F-C")]
+    ForwardCenter,
 
     #[serde(rename = "F-G")]
     ForwardGuard,
 
-    #[serde(rename = "G")]
-    Guard,
+    #[serde(rename = "G-F")]
+    GuardForward,
 }
 
 #[derive(Clone, Copy, Default, Serialize, Deserialize)]
@@ -213,4 +216,247 @@ impl<S> From<Option<S>> for PlayerStat<S> {
     fn from(value: Option<S>) -> Self {
         value.map_or(Self::Team, Self::Player)
     }
+}
+
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
+pub enum Division {
+    #[default]
+    #[serde(rename = "Atlantic")]
+    Atlantic,
+
+    #[serde(rename = "Central")]
+    Central,
+
+    #[serde(rename = "Southeast")]
+    Southeast,
+
+    #[serde(rename = "Northwest")]
+    Northwest,
+
+    #[serde(rename = "Pacific")]
+    Pacific,
+
+    #[serde(rename = "Southwest")]
+    Southwest,
+}
+
+impl Division {
+    #[must_use]
+    pub const fn conference(self) -> Conference {
+        match self {
+            Self::Atlantic | Self::Central | Self::Southeast => Conference::East,
+            Self::Northwest | Self::Pacific | Self::Southwest => Conference::West,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
+pub enum Conference {
+    #[default]
+    #[serde(rename = "East")]
+    East,
+
+    #[serde(rename = "West")]
+    West,
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ConferenceOrDivision {
+    Conference(Conference),
+
+    Division(Division),
+}
+
+impl ConferenceOrDivision {
+    #[must_use]
+    pub const fn conference(self) -> Conference {
+        match self {
+            Self::Conference(c) => c,
+            Self::Division(d) => d.conference(),
+        }
+    }
+}
+
+impl Default for ConferenceOrDivision {
+    fn default() -> Self {
+        Self::Conference(Conference::default())
+    }
+}
+
+impl From<Conference> for ConferenceOrDivision {
+    fn from(value: Conference) -> Self {
+        Self::Conference(value)
+    }
+}
+
+impl From<Division> for ConferenceOrDivision {
+    fn from(value: Division) -> Self {
+        Self::Division(value)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
+pub enum StarterOrBench {
+    #[default]
+    #[serde(rename = "Bench")]
+    Bench,
+
+    #[serde(rename = "Starter")]
+    Starter,
+}
+
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
+pub enum SeasonSegment {
+    #[default]
+    #[serde(rename = "Pre All-Star")]
+    PreAllStar,
+
+    #[serde(rename = "Post All-Star")]
+    PostAllStar,
+}
+
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
+pub enum Month {
+    #[default]
+    #[serde(rename = "January")]
+    January,
+
+    #[serde(rename = "February")]
+    February,
+
+    #[serde(rename = "March")]
+    March,
+
+    #[serde(rename = "April")]
+    April,
+
+    #[serde(rename = "May")]
+    May,
+
+    #[serde(rename = "June")]
+    June,
+
+    #[serde(rename = "July")]
+    July,
+
+    #[serde(rename = "August")]
+    August,
+
+    #[serde(rename = "September")]
+    September,
+
+    #[serde(rename = "October")]
+    October,
+
+    #[serde(rename = "November")]
+    November,
+
+    #[serde(rename = "December")]
+    December,
+}
+
+#[derive(Clone, Copy, Debug, Default)]
+pub enum FullSeasonSegment {
+    #[default]
+    AllSeasonSegments,
+
+    LastNGames(u32),
+
+    Month(Month),
+
+    SeasonSegment(SeasonSegment),
+}
+
+impl Serialize for FullSeasonSegment {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match self {
+            Self::AllSeasonSegments => serializer.serialize_str("All Season Segments"),
+            Self::LastNGames(n) => serializer.serialize_str(&format!("Last {} Games", n)),
+            Self::Month(m) => m.serialize(serializer),
+            Self::SeasonSegment(s) => s.serialize(serializer),
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for FullSeasonSegment {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct FullSeasonSegmentVisitor;
+
+        impl<'de> Visitor<'de> for FullSeasonSegmentVisitor {
+            type Value = FullSeasonSegment;
+
+            fn expecting(&self, formatter: &mut Formatter<'_>) -> fmt::Result {
+                formatter.write_str("a full season segment")
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                match value {
+                    "All Season Segments" => Ok(Self::Value::AllSeasonSegments),
+                    s if s.starts_with("Last ") && s.ends_with(" Games") => {
+                        let n = s[5..s.len() - 6].parse().map_err(E::custom)?;
+                        Ok(Self::Value::LastNGames(n))
+                    }
+                    s => {
+                        let m = serde_json::from_str(s).map_err(E::custom)?;
+                        Ok(Self::Value::Month(m))
+                    }
+                }
+            }
+        }
+
+        deserializer.deserialize_str(FullSeasonSegmentVisitor)
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
+pub enum PlayerExperience {
+    #[default]
+    #[serde(rename = "Rookie")]
+    Rookie,
+
+    #[serde(rename = "Sophomore")]
+    Sophomore,
+
+    #[serde(rename = "Veteran")]
+    Veteran,
+}
+
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
+pub enum WinOrLoss {
+    #[default]
+    #[serde(rename = "L")]
+    Loss,
+
+    #[serde(rename = "W")]
+    Win,
+}
+
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
+pub enum Location {
+    #[default]
+    #[serde(rename = "Home")]
+    Home,
+
+    #[serde(rename = "Road")]
+    Road,
+}
+
+#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
+pub enum GameScope {
+    #[default]
+    #[serde(rename = "Yesterday")]
+    Yesterday,
+
+    #[serde(rename = "Last 10")]
+    Last10,
 }
