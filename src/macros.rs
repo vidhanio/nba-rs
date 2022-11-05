@@ -17,7 +17,7 @@ macro_rules! endpoint {
         }
     } => {
         #[allow(missing_copy_implementations)]
-        #[derive(Clone, Debug, Default, ::serde::Serialize, ::serde::Deserialize)]
+        #[derive(Clone, Debug, Default, PartialEq, Eq, ::serde::Serialize, ::serde::Deserialize)]
         #[serde(deny_unknown_fields)]
         #[serde(rename_all = "PascalCase")]
         pub struct $name {
@@ -42,7 +42,7 @@ macro_rules! endpoint {
 
         $(
             #[allow(missing_copy_implementations)]
-            #[derive(Clone, Debug, Default, ::serde::Serialize)]
+            #[derive(Clone, Debug, Default, PartialEq, ::serde::Serialize)]
             pub struct $rs {
                 $(
                     $(#[$rfattr])*
@@ -51,7 +51,7 @@ macro_rules! endpoint {
             }
         )*
 
-        #[derive(Clone, Debug, Default, ::serde::Serialize)]
+        #[derive(Clone, Debug, Default, PartialEq, ::serde::Serialize)]
         #[serde(deny_unknown_fields)]
         #[serde(rename_all = "camelCase")]
         pub struct ResultSets {

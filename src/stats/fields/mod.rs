@@ -3,48 +3,46 @@
 
 #![allow(missing_docs)]
 
-use serde::{Deserialize, Serialize};
+mod league_id;
+mod per_mode;
+mod season;
+mod season_type;
+mod yes_or_no;
 
-pub mod per_mode;
+pub use league_id::*;
+pub use per_mode::*;
+pub use season::*;
+pub use season_type::*;
+pub use yes_or_no::*;
 
-#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
-pub enum LeagueId {
-    #[default]
-    #[serde(rename = "00")]
-    Nba,
-
-    #[serde(rename = "10")]
-    Wnba,
-
-    #[serde(rename = "20")]
-    GLeague,
-}
-
-#[derive(Clone, Copy, Debug, Default, Serialize, Deserialize)]
-pub enum YesOrNo {
-    #[default]
-    #[serde(rename = "N")]
-    No,
-
-    #[serde(rename = "Y")]
-    Yes,
-}
-
-impl From<YesOrNo> for bool {
-    fn from(value: YesOrNo) -> Self {
-        match value {
-            YesOrNo::No => false,
-            YesOrNo::Yes => true,
+macro_rules! convert {
+    {
+        $subset:ident => $superset:ident {
+            $($variant:ident,)*
         }
-    }
-}
-
-impl From<bool> for YesOrNo {
-    fn from(value: bool) -> Self {
-        if value {
-            Self::Yes
-        } else {
-            Self::No
+    } => {
+        impl From<$subset> for $superset {
+            fn from(value: $subset) -> Self {
+                match value {
+                    $(
+                        $subset::$variant => Self::$variant,
+                    )*
+                }
+            }
         }
-    }
+
+        impl TryFrom<$superset> for $subset {
+            type Error = ();
+
+            fn try_from(value: $superset) -> Result<Self, Self::Error> {
+                match value {
+                    $(
+                        $superset::$variant => Ok(Self::$variant),
+                    )*
+                    _ => Err(()),
+                }
+            }
+        }
+    };
 }
+use convert;

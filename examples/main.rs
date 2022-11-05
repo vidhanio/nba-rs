@@ -1,6 +1,6 @@
 use nba::{
     debug,
-    stats::player::{official_leaders::fields::*, OfficialLeaders},
+    stats::player::official_leaders::{fields::*, OfficialLeaders},
 };
 
 #[tokio::main]
