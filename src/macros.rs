@@ -68,37 +68,47 @@ macro_rules! endpoint {
                     .into_iter()
                     .try_fold(
                         Self::default(),
-                        |#[allow(unused_mut)] mut result_sets, rs| {
+                        |#[allow(unused_mut)] mut result_sets, mut rs| {
+                            let mut index_hm = rs
+                                .headers
+                                .iter()
+                                .enumerate()
+                                .map(|(i, h)| (h.to_lowercase(), i))
+                                .collect::<::std::collections::HashMap<_, _>>();
+
+
                             match rs.name.as_str() {
                                 $(
                                     $rl => {
-                                        rs.columns().try_for_each(|(header, col, len)| {
-                                            Ok(match header.to_lowercase().as_str() {
+                                        $(
+                                            index_hm.entry(stringify!($rf).to_owned()).or_insert_with_key(|rf| {
+                                                rs.headers.push(rf.to_owned());
+                                                rs.headers.len() - 1
+                                            });
+                                        )*
+
+                                        rs.row_set.iter_mut().for_each(|row| row.resize(rs.headers.len(), ::serde_json::Value::Null));
+
+                                        result_sets.$rn = rs.row_set
+                                            .into_iter()
+                                            .map(|row| Ok($rs {
                                                 $(
-                                                    stringify!($rf) => {
-                                                        result_sets.$rn.resize_with(len, Default::default);
-                                                        col.enumerate().try_for_each(|(i, val)| {
-                                                            result_sets.$rn[i].$rf = ::serde_json::from_value(val.clone())
-                                                                .map_err(|e| format!("{}: {}", stringify!($rf), e))?;
-
-                                                            Ok::<_, String>(())
-                                                        })?;
-                                                    }
+                                                    $rf: row.get(*index_hm
+                                                        .get(stringify!($rf).to_lowercase().as_str())
+                                                        .ok_or_else(|| format!("missing field `{}`", stringify!($rf)))?)
+                                                        .cloned()
+                                                        .map(::serde_json::from_value)
+                                                        .ok_or_else(|| format!("missing field `{}`", stringify!($rf)))?
+                                                        .map_err(|e| format!("failed to parse field `{}`: {}", stringify!($rf), e))?,
                                                 )*
-                                                _ => {
-                                                    return Err(format!(
-                                                        "unknown column header: {}",
-                                                        header
-                                                    ));
-                                                }
-                                            })
-                                        })
-                                    }
-                                )*
-                                _ => Err(format!("unknown result set: {}", rs.name)),
-                            }?;
+                                            }))
+                                            .collect::<Result<_, String>>()?;
 
-                            Ok(result_sets)
+                                        Ok(result_sets)
+                                    },
+                                )*
+                                _ => Err(format!("unknown result set: `{}`", rs.name)),
+                            }
                         },
                     )
             }
