@@ -42,6 +42,7 @@ macro_rules! endpoint {
 
         $(
             #[allow(missing_copy_implementations)]
+            #[allow(clippy::derive_partial_eq_without_eq)]
             #[derive(Clone, Debug, Default, PartialEq, ::serde::Serialize)]
             pub struct $rs {
                 $(
@@ -51,6 +52,8 @@ macro_rules! endpoint {
             }
         )*
 
+        #[allow(missing_copy_implementations)]
+        #[allow(clippy::derive_partial_eq_without_eq)]
         #[derive(Clone, Debug, Default, PartialEq, ::serde::Serialize)]
         #[serde(deny_unknown_fields)]
         #[serde(rename_all = "camelCase")]
@@ -63,12 +66,14 @@ macro_rules! endpoint {
         impl ::std::convert::TryFrom<Vec<$crate::BasicResultSet>> for ResultSets {
             type Error = String;
 
+            #[allow(unused_mut)]
+            #[allow(unused_variables)]
             fn try_from(basic: Vec<$crate::BasicResultSet>) -> Result<Self, Self::Error> {
                 basic
                     .into_iter()
                     .try_fold(
                         Self::default(),
-                        |#[allow(unused_mut)] mut result_sets, mut rs| {
+                        |mut result_sets, mut rs| {
                             let mut index_hm = rs
                                 .headers
                                 .iter()

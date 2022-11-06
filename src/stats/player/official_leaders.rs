@@ -1,10 +1,13 @@
 pub mod fields {
-    use serde::{Deserialize, Serialize};
-
-    pub use crate::stats::fields::{
-        LeagueId, PerMode48 as PerMode, Season2022To1946 as Season,
-        SeasonTypeWithoutPlayIn as SeasonType, YesOrNo,
+    pub use crate::{
+        serde::serde_optional_infallible,
+        stats::fields::{
+            LeagueId, PerMode48 as PerMode, Season2022To1946 as Season,
+            SeasonTypeWithoutPlayIn as SeasonType,
+        },
     };
+
+    use serde::{Deserialize, Serialize};
 
     #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
     pub enum StatCategory {
@@ -51,18 +54,29 @@ pub mod fields {
     }
 }
 
-use fields::{LeagueId, PerMode, Scope, Season, SeasonType, StatCategory, YesOrNo};
+use std::convert::Infallible;
+
+use fields::{
+    serde_optional_infallible, LeagueId, PerMode, Scope, Season, SeasonType, StatCategory,
+};
 
 crate::endpoint! {
     OfficialLeaders("leagueleaders") {
         #[serde(rename = "LeagueID")]
         league_id: LeagueId,
+
         season: Season,
+
         season_type: SeasonType,
+
         per_mode: PerMode,
+
         stat_category: StatCategory,
+
         scope: Scope,
-        active_flag: Option<YesOrNo>,
+
+        #[serde(with = "serde_optional_infallible")]
+        active_flag: Option<Infallible>,
     } => {
         league_leaders: LeagueLeadersRow("LeagueLeaders") {
             player_id: u32,

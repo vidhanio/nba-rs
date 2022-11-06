@@ -1,4 +1,7 @@
-use serde::{Deserialize, Serialize};
+#![allow(missing_docs)]
+#![allow(clippy::missing_errors_doc)]
+
+use serde::{Deserialize, Serialize, Serializer};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(untagged)]
@@ -34,5 +37,39 @@ impl<T> From<VecOrSingle<T>> for Vec<T> {
             VecOrSingle::Vec(v) => v,
             VecOrSingle::Single(s) => vec![s],
         }
+    }
+}
+
+pub fn serde_none_as_empty_string<T: Serialize, S>(
+    value: &Option<T>,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    match value {
+        Some(x) => x.serialize(serializer),
+        None => serializer.serialize_str(""),
+    }
+}
+
+pub mod serde_optional_infallible {
+    use std::convert::Infallible;
+
+    use serde::{Deserialize, Deserializer, Serializer};
+
+    #[allow(clippy::trivially_copy_pass_by_ref)]
+    pub fn serialize<S>(_: &Option<Infallible>, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str("")
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<Option<Infallible>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Option::<()>::deserialize(deserializer).map(|_| None)
     }
 }

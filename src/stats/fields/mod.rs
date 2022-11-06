@@ -5,12 +5,14 @@
 
 mod league_id;
 mod per_mode;
+mod position;
 mod season;
 mod season_type;
 mod yes_or_no;
 
 pub use league_id::*;
 pub use per_mode::*;
+pub use position::*;
 pub use season::*;
 pub use season_type::*;
 pub use yes_or_no::*;

@@ -8,39 +8,41 @@ async fn main() -> color_eyre::Result<()> {
     let input = fs::read_to_string("tmp/input.txt").await?;
     let mut lines = input.lines();
     let name = AsPascalCase(lines.next().unwrap().split_once(' ').unwrap().1);
+
+    let mut default_blank = false;
     let variants = lines
-        .skip(1)
-        .take_while(|l| l.starts_with(char::is_numeric))
-        .map(|l| {
-            let (_, l) = l.split_once(' ').unwrap();
-            let mut parts = l
-                .trim_matches(|c| c == '[' || c == ']')
-                .splitn(3, ", ")
-                .map(|s| s.trim_matches('"'));
-            let default = parts.next().unwrap() == "DEFAULT";
-            let name = AsPascalCase(parts.next().unwrap());
-            let rename = parts.next().unwrap();
-            let rename = &rename[..rename.len() - 6];
+        .map(|line| {
+            let mut split = line.trim_matches('"').splitn(3, '|');
+            let default = split.next().unwrap() == "DEFAULT";
+            let name = AsPascalCase(split.next().unwrap());
+            let rename = split.next().unwrap();
+            if rename.is_empty() {
+                default_blank = true;
+            }
             (default, name, rename)
-        });
+        })
+        .collect::<Vec<_>>();
 
     let mut output = String::new();
     writeln!(
         output,
-        "#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Deserialize, Serialize)]"
+        "#[derive(Clone, Copy, Debug, {}PartialEq, Eq, Serialize, Deserialize)]",
+        if default_blank { "" } else { "Default, " }
     )?;
     writeln!(output, "pub enum {name} {{",)?;
     for (default, name, rename) in variants {
-        if default {
-            writeln!(output, "    #[default]")?;
+        if !rename.is_empty() {
+            if default {
+                writeln!(output, "    #[default]")?;
+            }
+            writeln!(output, "    #[serde(rename = \"{rename}\")]",)?;
+            writeln!(output, "    {name},",)?;
+            writeln!(output)?;
         }
-        writeln!(output, "    #[serde(rename = \"{rename}\")]",)?;
-        writeln!(output, "    {name},",)?;
-        writeln!(output)?;
     }
     writeln!(output, "}}")?;
 
-    fs::write("tmp/params.txt", output).await?;
+    println!("{output}");
 
     Ok(())
 }

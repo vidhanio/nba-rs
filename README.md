@@ -9,7 +9,7 @@ document
     .forEach(label => console.log(
         label.querySelector("p").innerText, 
         [...label.querySelectorAll("option")].map(option => 
-            [option.selected ? "DEFAULT" : "", option.innerText, option.value]
-        )
+            `${option.selected ? "DEFAULT" : ""}|${option.innerText}|${option.value}`
+        ).join("\n")
     ))
 ```
