@@ -1,4 +1,13 @@
-use nba::{stats::player::playtype::PlayersPlaytype, Endpoint};
+use nba::{
+    stats::{
+        fields::{LeagueId, PlayType, SeasonSince1996, TypeGrouping},
+        player::{
+            general::estimated_advanced::PlayersEstimatedAdvancedParameters,
+            playtype::{PlayersPlaytype, PlayersPlaytypeParameters},
+        },
+    },
+    Endpoint,
+};
 use tokio::{fs::File, io::AsyncWriteExt};
 
 #[tokio::main]
@@ -7,7 +16,10 @@ async fn main() -> color_eyre::Result<()> {
 
     let mut f = File::create("tmp/debug.txt").await?;
 
-    let endpoint = PlayersPlaytype::default();
+    let endpoint = PlayersPlaytype::new(PlayersPlaytypeParameters {
+        league_id: LeagueId::GLeague,
+        ..Default::default()
+    });
 
     f.write_all(format!("{endpoint:#?}\n\n").as_bytes()).await?;
 

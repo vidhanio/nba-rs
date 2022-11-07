@@ -322,7 +322,7 @@ pub enum SeasonSince1996 {
     From2022To23,
 }
 
-super::convert! {
+super::convert_subset! {
     SeasonSince1996 => SeasonSince1946 {
         From1996To97,
         From1997To98,
@@ -383,7 +383,7 @@ pub enum SeasonSince2015 {
     From2022To23,
 }
 
-super::convert! {
+super::convert_subset! {
     SeasonSince2015 => SeasonSince1946 {
         From2015To16,
         From2016To17,
@@ -396,7 +396,7 @@ super::convert! {
     }
 }
 
-super::convert! {
+super::convert_subset! {
     SeasonSince2015 => SeasonSince1996 {
         From2015To16,
         From2016To17,

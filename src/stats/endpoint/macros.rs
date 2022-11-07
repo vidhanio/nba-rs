@@ -2,17 +2,17 @@ macro_rules! endpoint {
     {
         $name:ident($params:ident): $endpoint:literal => {
             $(
-                $df:ident: $dv:expr
-            ),* $(,)?
+                $df:ident: $dv:expr,
+            )*
         } => {
             $(
                 $rn:ident: $rs:ident($rl:literal) {
                     $(
                         $(#[$rfattr:meta])*
-                        $rf:ident: $rty:ty
-                    ),* $(,)?
-                }
-            ),* $(,)?
+                        $rf:ident: $rty:ty,
+                    )*
+                },
+            )*
         }
     } => {
         #[allow(missing_copy_implementations)]

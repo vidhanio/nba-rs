@@ -6,6 +6,9 @@ pub enum LeagueId {
     #[serde(rename = "00")]
     Nba,
 
+    #[serde(rename = "01")]
+    Aba,
+
     #[serde(rename = "10")]
     Wnba,
 

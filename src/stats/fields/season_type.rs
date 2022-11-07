@@ -35,7 +35,7 @@ pub enum SeasonTypeWithoutPlayIn {
     AllStar,
 }
 
-super::convert! {
+super::convert_subset! {
     SeasonTypeWithoutPlayIn => SeasonType {
         PreSeason,
         RegularSeason,
@@ -54,14 +54,14 @@ pub enum SeasonTypeBasic {
     Playoffs,
 }
 
-super::convert! {
+super::convert_subset! {
     SeasonTypeBasic => SeasonType {
         RegularSeason,
         Playoffs,
     }
 }
 
-super::convert! {
+super::convert_subset! {
     SeasonTypeBasic => SeasonTypeWithoutPlayIn {
         RegularSeason,
         Playoffs,

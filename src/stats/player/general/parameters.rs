@@ -17,6 +17,7 @@ use crate::{
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "PascalCase")]
 pub struct PlayersGeneralParameters {
+    #[doc(hidden)]
     pub measure_type: MeasureType,
 
     pub per_mode: PerMode,

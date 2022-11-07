@@ -1,9 +1,12 @@
 mod parameters;
 
-pub use parameters::PlayerPlaytypeParameters;
+pub use parameters::PlayersPlaytypeParameters;
+
+use crate::stats::fields::PlayerOrTeamChar;
 
 crate::endpoint! {
-    PlayersPlaytype(PlayerPlaytypeParameters): "synergyplaytypes" => {
+    PlayersPlaytype(PlayersPlaytypeParameters): "synergyplaytypes" => {
+        player_or_team: PlayerOrTeamChar::Player,
     } => {
         synergy_play_type: SynergyPlayTypeRow("SynergyPlayType") {
             season_id: String,

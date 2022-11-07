@@ -52,7 +52,7 @@ reexport! {
     yes_or_no;
 }
 
-macro_rules! convert {
+macro_rules! convert_subset {
     {
         $subset:ident => $superset:ident {
             $($variant:ident,)*
@@ -77,6 +77,35 @@ macro_rules! convert {
                         $superset::$variant => Ok(Self::$variant),
                     )*
                     _ => Err(()),
+                }
+            }
+        }
+    };
+}
+use convert_subset;
+
+macro_rules! convert {
+    {
+        $set1:ident => $set2:ident {
+            $($variant:ident,)*
+        }
+    } => {
+        impl From<$set1> for $set2 {
+            fn from(value: $set1) -> Self {
+                match value {
+                    $(
+                        $set1::$variant => Self::$variant,
+                    )*
+                }
+            }
+        }
+
+        impl From<$set2> for $set1 {
+            fn from(value: $set2) -> Self {
+                match value {
+                    $(
+                        $set2::$variant => Self::$variant,
+                    )*
                 }
             }
         }

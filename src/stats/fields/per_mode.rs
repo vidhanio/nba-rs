@@ -50,7 +50,7 @@ pub enum PerMode48 {
     Per48Minutes,
 }
 
-super::convert! {
+super::convert_subset! {
     PerMode48 => PerMode {
         Totals,
         PerGame,
@@ -68,14 +68,14 @@ pub enum PerModeGame {
     PerGame,
 }
 
-super::convert! {
+super::convert_subset! {
     PerModeGame => PerMode {
         Totals,
         PerGame,
     }
 }
 
-super::convert! {
+super::convert_subset! {
     PerModeGame => PerMode48 {
         Totals,
         PerGame,

@@ -1,13 +1,13 @@
 use serde::{Deserialize, Serialize};
 
 use crate::stats::fields::{
-    LeagueId, PerModeGame, PlayType, PlayerOrTeam, SeasonSince2015, SeasonType, TypeGrouping,
+    LeagueId, PerModeGame, PlayType, PlayerOrTeamChar, SeasonSince2015, SeasonType, TypeGrouping,
 };
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "PascalCase")]
-pub struct PlayerPlaytypeParameters {
+pub struct PlayersPlaytypeParameters {
     #[serde(rename = "LeagueID")]
     pub league_id: LeagueId,
 
@@ -17,7 +17,8 @@ pub struct PlayerPlaytypeParameters {
 
     pub per_mode: PerModeGame,
 
-    pub player_or_team: PlayerOrTeam,
+    #[doc(hidden)]
+    pub player_or_team: PlayerOrTeamChar,
 
     pub play_type: PlayType,
 
