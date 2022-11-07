@@ -15,6 +15,8 @@ macro_rules! reexport {
 }
 
 reexport! {
+    ahead_or_behind;
+    clutch_time;
     college;
     conference;
     country;
@@ -32,6 +34,7 @@ reexport! {
     outcome;
     per_mode;
     playoff_round;
+    point_diff;
     position;
     quarter;
     scope;

@@ -103,12 +103,13 @@ macro_rules! endpoint {
                                             .into_iter()
                                             .map(|row| Ok($rs {
                                                 $(
-                                                    $rf: row.get(*index_hm
-                                                        .get(stringify!($rf).to_lowercase().as_str())
-                                                        .ok_or_else(|| format!("missing field `{}`", stringify!($rf)))?)
+                                                    $rf: row
+                                                        .get(*index_hm
+                                                            .get(stringify!($rf).to_lowercase().as_str())
+                                                            .expect("every header should be present in `index_hm`"))
                                                         .cloned()
                                                         .map(::serde_json::from_value)
-                                                        .ok_or_else(|| format!("missing field `{}`", stringify!($rf)))?
+                                                        .expect("every field should be present in `row`")
                                                         .map_err(|e| format!("failed to parse field `{}`: {}", stringify!($rf), e))?,
                                                 )*
                                             }))

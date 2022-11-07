@@ -9,6 +9,7 @@ async fn main() -> color_eyre::Result<()> {
     let mut lines = input.lines();
     let name = AsPascalCase(lines.next().unwrap().split_once(' ').unwrap().1);
 
+    let mut repr = false;
     let mut default_blank = false;
     let variants = lines
         .map(|line| {
@@ -19,30 +20,41 @@ async fn main() -> color_eyre::Result<()> {
             if rename.is_empty() {
                 default_blank = true;
             }
+            if rename.chars().all(char::is_numeric) {
+                repr = true;
+            }
             (default, name, rename)
         })
         .collect::<Vec<_>>();
 
-    let mut output = String::new();
-    writeln!(
-        output,
-        "#[derive(Clone, Copy, Debug, {}PartialEq, Eq, Serialize, Deserialize)]",
-        if default_blank { "" } else { "Default, " }
-    )?;
-    writeln!(output, "pub enum {name} {{",)?;
+    println!(
+        "#[derive(Clone, Copy, Debug, {}PartialEq, Eq, Serialize{}, Deserialize{})]",
+        if default_blank { "" } else { "Default, " },
+        if repr { "_repr" } else { "" },
+        if repr { "_repr" } else { "" },
+    );
+    println!("pub enum {name} {{",);
     for (default, name, rename) in variants {
         if !rename.is_empty() {
             if default {
-                writeln!(output, "    #[default]")?;
+                println!("    #[default]");
             }
-            writeln!(output, "    #[serde(rename = \"{rename}\")]",)?;
-            writeln!(output, "    {name},",)?;
-            writeln!(output)?;
+
+            if !repr {
+                println!("    #[serde(rename = \"{rename}\")]",);
+            }
+
+            println!(
+                "    {name}{},\n",
+                if repr {
+                    format!(" = {rename}")
+                } else {
+                    String::new()
+                }
+            );
         }
     }
-    writeln!(output, "}}")?;
-
-    println!("{output}");
+    println!("}}");
 
     Ok(())
 }
