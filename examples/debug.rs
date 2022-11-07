@@ -1,10 +1,7 @@
 use nba::{
     stats::{
-        fields::{LeagueId, PlayType, SeasonSince1996, TypeGrouping},
-        player::{
-            general::estimated_advanced::PlayersEstimatedAdvancedParameters,
-            playtype::{PlayersPlaytype, PlayersPlaytypeParameters},
-        },
+        fields::LeagueId,
+        player::playtype::{PlayersPlaytype, PlayersPlaytypeParameters},
     },
     Endpoint,
 };

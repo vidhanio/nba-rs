@@ -8,8 +8,8 @@ use crate::{
     stats::fields::{
         College, Conference, Country, Division, DraftPick, DraftYear, Experience, Half, Height,
         LastNGames, LeagueId, Location, MeasureType, Month, Outcome, PerMode, PlayoffRound,
-        Position, Quarter, SeasonSegment, SeasonSince1996, SeasonType, ShotClockRange,
-        StarterOrBench, Team, Weight, YesOrNo,
+        Position, Quarter, Season, SeasonSegment, SeasonType, ShotClockRange, StarterOrBench, Team,
+        Weight, YesOrNo,
     },
 };
 
@@ -31,7 +31,7 @@ pub struct PlayersGeneralParameters {
     #[serde(rename = "LeagueID")]
     pub league_id: LeagueId,
 
-    pub season: SeasonSince1996,
+    pub season: Season,
 
     pub season_type: SeasonType,
 

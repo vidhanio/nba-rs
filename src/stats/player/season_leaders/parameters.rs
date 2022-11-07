@@ -4,9 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     serde::serde_optional_infallible,
-    stats::fields::{
-        LeagueId, PerMode48, Scope, SeasonSince1946, SeasonTypeWithoutPlayIn, StatCategory,
-    },
+    stats::fields::{LeagueId, PerMode48, Scope, Season, SeasonTypeWithoutPlayIn, StatCategory},
 };
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -20,7 +18,7 @@ pub struct SeasonLeadersParameters {
 
     pub stat_category: StatCategory,
 
-    pub season: SeasonSince1946,
+    pub season: Season,
 
     pub season_type: SeasonTypeWithoutPlayIn,
 
