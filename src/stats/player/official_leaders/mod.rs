@@ -1,4 +1,4 @@
-pub mod parameters;
+mod parameters;
 
 pub use parameters::OfficialLeadersParameters;
 

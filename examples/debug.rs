@@ -1,4 +1,4 @@
-use nba::{stats::player::general::scoring::PlayersScoring, Endpoint};
+use nba::{stats::player::general::opponent::PlayersOpponent, Endpoint};
 use tokio::{fs::File, io::AsyncWriteExt};
 
 #[tokio::main]
@@ -7,9 +7,12 @@ async fn main() -> color_eyre::Result<()> {
 
     let mut f = File::create("tmp/debug.txt").await?;
 
-    let endpoint = PlayersScoring::new(Default::default());
+    let endpoint = PlayersOpponent::new(Default::default());
 
     f.write_all(format!("{endpoint:#?}\n\n").as_bytes()).await?;
+
+    f.write_all(format!("{:#?}\n\n", endpoint.to_request()).as_bytes())
+        .await?;
 
     f.write_all(format!("{}\n\n", endpoint.send_raw().await?.text().await?).as_bytes())
         .await?;

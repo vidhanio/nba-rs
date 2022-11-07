@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     serde::{serde_none_as_empty_string, serde_optional_date, serde_optional_infallible},
     stats::fields::{
-        College, Conference, Country, Division, DraftPick, DraftYear, Experience, Height,
+        College, Conference, Country, Division, DraftPick, DraftYear, Experience, Half, Height,
         LastNGames, LeagueId, Location, MeasureType, Month, Outcome,
         PerModePlayersGeneral as PerMode, PlayoffRound, Position, Quarter, SeasonSegment,
         SeasonSince1996 as Season, SeasonType, ShotClockRange, StarterOrBench, Team, Weight,
@@ -73,8 +73,8 @@ pub struct PlayersGeneralParameters {
     #[serde(serialize_with = "serde_none_as_empty_string")]
     pub division: Option<Division>,
 
-    #[serde(with = "serde_optional_infallible")]
-    pub game_segment: Option<Infallible>,
+    #[serde(serialize_with = "serde_none_as_empty_string")]
+    pub game_segment: Option<Half>,
 
     pub period: Quarter,
 
