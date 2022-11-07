@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub enum Season2022To1946 {
+pub enum SeasonSince1946 {
     #[default]
     #[serde(rename = "2022-23")]
     From2022To23,
@@ -236,7 +236,7 @@ pub enum Season2022To1946 {
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub enum Season2022To1996 {
+pub enum SeasonSince1996 {
     #[default]
     #[serde(rename = "2022-23")]
     From2022To23,
@@ -321,7 +321,7 @@ pub enum Season2022To1996 {
 }
 
 super::convert! {
-    Season2022To1996 => Season2022To1946 {
+    SeasonSince1996 => SeasonSince1946 {
         From2022To23,
         From2021To22,
         From2020To21,

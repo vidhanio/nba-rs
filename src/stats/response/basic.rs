@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::{serde::VecOrSingle, Response};
+use crate::{serde::vec_or_single::VecOrSingle, Response};
 
 pub type BasicResponse =
     Response<serde_json::Map<String, serde_json::Value>, VecOrSingle<BasicResultSet>>;

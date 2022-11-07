@@ -1,9 +1,8 @@
 macro_rules! endpoint {
     {
-        $name:ident($endpoint:literal) {
+        $name:ident($params:ident): $endpoint:literal => {
             $(
-                $(#[$sfattr:meta])*
-                $sf:ident: $sty:ty
+                $df:ident: $dv:expr
             ),* $(,)?
         } => {
             $(
@@ -21,22 +20,28 @@ macro_rules! endpoint {
         #[serde(deny_unknown_fields)]
         #[serde(rename_all = "PascalCase")]
         pub struct $name {
-            $(
-                $(#[$sfattr])*
-                pub $sf: $sty
-            ),*
+            params: $params,
         }
 
         impl $crate::Endpoint for $name {
-            type Parameters = Self;
+            type Parameters = $params;
             type ResultSets = ResultSets;
+
+            fn new(params: Self::Parameters) -> Self {
+                Self { params }
+            }
 
             fn endpoint(&self) -> ::std::borrow::Cow<'static, str> {
                 $endpoint.into()
             }
 
-            fn parameters(&self) -> &Self::Parameters {
-                self
+            fn parameters(&self) -> Self::Parameters {
+                Self::Parameters {
+                    $(
+                        $df: $dv,
+                    )*
+                    ..self.params
+                }
             }
         }
 
@@ -124,7 +129,7 @@ macro_rules! endpoint {
             where
                 D: ::serde::Deserializer<'de>,
             {
-                let raw = $crate::serde::VecOrSingle::<$crate::BasicResultSet>::deserialize(deserializer)?.into_vec();
+                let raw = $crate::serde::vec_or_single::VecOrSingle::<$crate::BasicResultSet>::deserialize(deserializer)?.into_vec();
 
                 raw.try_into().map_err(::serde::de::Error::custom)
             }

@@ -27,8 +27,7 @@ async fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
 
     let mut args = env::args();
-    let name = args.nth(1).ok_or_else(|| eyre!("missing argument: name"))?;
-    let url = args.next().ok_or_else(|| eyre!("missing argument: url"))?;
+    let url = args.nth(1).ok_or_else(|| eyre!("missing argument: url"))?;
 
     let resp = nba::CLIENT
         .get(url)
@@ -69,7 +68,7 @@ async fn main() -> color_eyre::Result<()> {
 
     write!(s, "    ")?;
 
-    fs::write(format!("tmp/{name}.txt"), s).await?;
+    fs::write("tmp/analyzer.txt", s).await?;
 
     Ok(())
 }

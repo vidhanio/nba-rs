@@ -1,5 +1,3 @@
-pub mod basic;
-
 use std::{borrow::Cow, future::Future, pin::Pin};
 
 use reqwest::{Client, Request};
@@ -17,18 +15,20 @@ pub trait Endpoint: Sync {
     /// The type of the result sets returned by the endpoint.
     type ResultSets: DeserializeOwned;
 
+    fn new(params: Self::Parameters) -> Self;
+
     /// The endpoint's name.
     fn endpoint(&self) -> Cow<'static, str>;
 
     /// The parameters used to generate the response.
-    fn parameters(&self) -> &Self::Parameters;
+    fn parameters(&self) -> Self::Parameters;
 
     /// Creates a [`reqwest::Request`] from `self` using the provided
     /// [`reqwest::Client`].
     fn to_request_with_client(&self, client: &Client) -> Request {
         client
             .get(format!("https://stats.nba.com/stats/{}", self.endpoint()))
-            .query(self.parameters())
+            .query(&self.parameters())
             .build()
             .expect("request should build")
     }

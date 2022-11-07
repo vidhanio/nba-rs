@@ -14,7 +14,7 @@ pub enum PerMode48 {
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub enum PerModeGeneralTraditional {
+pub enum PerModePlayersGeneral {
     #[serde(rename = "Totals")]
     Totals,
 
@@ -51,7 +51,7 @@ pub enum PerModeGeneralTraditional {
 }
 
 super::convert! {
-    PerMode48 => PerModeGeneralTraditional {
+    PerMode48 => PerModePlayersGeneral {
         Totals,
         PerGame,
         Per48Minutes,

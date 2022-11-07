@@ -31,24 +31,6 @@ pub use stats::{
 
 use std::fmt::Debug;
 
-/// Debug an endpoint.
-///
-/// # Errors
-///
-/// This function will error if sending the request fails.
-pub async fn debug<E>(endpoint: &E) -> Result<()>
-where
-    E: Endpoint<Parameters = E> + Sync + Send + Debug,
-    E::ResultSets: Debug,
-{
-    println!("{endpoint:#?}");
-
-    println!("{:#?}", endpoint.send_basic().await?);
-    println!("{:#?}", endpoint.send().await?);
-
-    Ok(())
-}
-
 /// The default [`reqwest::Client`] used by [`Endpoint`]s.
 ///
 /// This client is configured to use the NBA Stats API's referer by default.
