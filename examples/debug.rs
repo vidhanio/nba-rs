@@ -1,4 +1,4 @@
-use nba::{stats::player::clutch::usage::PlayersClutchUsage, Endpoint};
+use nba::{stats::player::playtype::PlayersPlaytype, Endpoint};
 use tokio::{fs::File, io::AsyncWriteExt};
 
 #[tokio::main]
@@ -7,7 +7,7 @@ async fn main() -> color_eyre::Result<()> {
 
     let mut f = File::create("tmp/debug.txt").await?;
 
-    let endpoint = PlayersClutchUsage::default();
+    let endpoint = PlayersPlaytype::default();
 
     f.write_all(format!("{endpoint:#?}\n\n").as_bytes()).await?;
 

@@ -5,7 +5,7 @@ use crate::{
     serde::{serde_none_as_empty_string, serde_optional_date},
     stats::fields::{
         Conference, Division, Half, LastNGames, LeagueId, Location, MeasureType, Month, Outcome,
-        PerModePlayersGeneral, Quarter, SeasonSegment, SeasonSince1996, SeasonType, Team, YesOrNo,
+        PerMode, Quarter, SeasonSegment, SeasonSince1996, SeasonType, Team, YesOrNo,
     },
 };
 
@@ -15,7 +15,7 @@ use crate::{
 pub struct PlayersOpponentParameters {
     pub measure_type: MeasureType,
 
-    pub per_mode: PerModePlayersGeneral,
+    pub per_mode: PerMode,
 
     pub plus_minus: YesOrNo,
 

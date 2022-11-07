@@ -1,20 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub enum PerMode48 {
-    #[default]
-    #[serde(rename = "Totals")]
-    Totals,
-
-    #[serde(rename = "PerGame")]
-    PerGame,
-
-    #[serde(rename = "Per48")]
-    Per48Minutes,
-}
-
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub enum PerModePlayersGeneral {
+pub enum PerMode {
     #[serde(rename = "Totals")]
     Totals,
 
@@ -50,10 +37,47 @@ pub enum PerModePlayersGeneral {
     MinutesPer,
 }
 
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum PerMode48 {
+    #[serde(rename = "Totals")]
+    Totals,
+
+    #[default]
+    #[serde(rename = "PerGame")]
+    PerGame,
+
+    #[serde(rename = "Per48")]
+    Per48Minutes,
+}
+
 super::convert! {
-    PerMode48 => PerModePlayersGeneral {
+    PerMode48 => PerMode {
         Totals,
         PerGame,
         Per48Minutes,
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum PerModeGame {
+    #[serde(rename = "Totals")]
+    Totals,
+
+    #[default]
+    #[serde(rename = "PerGame")]
+    PerGame,
+}
+
+super::convert! {
+    PerModeGame => PerMode {
+        Totals,
+        PerGame,
+    }
+}
+
+super::convert! {
+    PerModeGame => PerMode48 {
+        Totals,
+        PerGame,
     }
 }

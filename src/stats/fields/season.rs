@@ -236,116 +236,6 @@ pub enum SeasonSince1946 {
     From2022To23,
 }
 
-impl SeasonSince1946 {
-    #[must_use]
-    pub const fn next(&self) -> Option<Self> {
-        match self {
-            Self::From1946To47 => Some(Self::From1947To48),
-            Self::From1947To48 => Some(Self::From1948To49),
-            Self::From1948To49 => Some(Self::From1949To50),
-            Self::From1949To50 => Some(Self::From1950To51),
-            Self::From1950To51 => Some(Self::From1951To52),
-            Self::From1951To52 => Some(Self::From1952To53),
-            Self::From1952To53 => Some(Self::From1953To54),
-            Self::From1953To54 => Some(Self::From1954To55),
-            Self::From1954To55 => Some(Self::From1955To56),
-            Self::From1955To56 => Some(Self::From1956To57),
-            Self::From1956To57 => Some(Self::From1957To58),
-            Self::From1957To58 => Some(Self::From1958To59),
-            Self::From1958To59 => Some(Self::From1959To60),
-            Self::From1959To60 => Some(Self::From1960To61),
-            Self::From1960To61 => Some(Self::From1961To62),
-            Self::From1961To62 => Some(Self::From1962To63),
-            Self::From1962To63 => Some(Self::From1963To64),
-            Self::From1963To64 => Some(Self::From1964To65),
-            Self::From1964To65 => Some(Self::From1965To66),
-            Self::From1965To66 => Some(Self::From1966To67),
-            Self::From1966To67 => Some(Self::From1967To68),
-            Self::From1967To68 => Some(Self::From1968To69),
-            Self::From1968To69 => Some(Self::From1969To70),
-            Self::From1969To70 => Some(Self::From1970To71),
-            Self::From1970To71 => Some(Self::From1971To72),
-            Self::From1971To72 => Some(Self::From1972To73),
-            Self::From1972To73 => Some(Self::From1973To74),
-            Self::From1973To74 => Some(Self::From1974To75),
-            Self::From1974To75 => Some(Self::From1975To76),
-            Self::From1975To76 => Some(Self::From1976To77),
-            Self::From1976To77 => Some(Self::From1977To78),
-            Self::From1977To78 => Some(Self::From1978To79),
-            Self::From1978To79 => Some(Self::From1979To80),
-            Self::From1979To80 => Some(Self::From1980To81),
-            Self::From1980To81 => Some(Self::From1981To82),
-            Self::From1981To82 => Some(Self::From1982To83),
-            Self::From1982To83 => Some(Self::From1983To84),
-            Self::From1983To84 => Some(Self::From1984To85),
-            Self::From1984To85 => Some(Self::From1985To86),
-            Self::From1985To86 => Some(Self::From1986To87),
-            Self::From1986To87 => Some(Self::From1987To88),
-            Self::From1987To88 => Some(Self::From1988To89),
-            Self::From1988To89 => Some(Self::From1989To90),
-            Self::From1989To90 => Some(Self::From1990To91),
-            Self::From1990To91 => Some(Self::From1991To92),
-            Self::From1991To92 => Some(Self::From1992To93),
-            Self::From1992To93 => Some(Self::From1993To94),
-            Self::From1993To94 => Some(Self::From1994To95),
-            Self::From1994To95 => Some(Self::From1995To96),
-            Self::From1995To96 => Some(Self::From1996To97),
-            Self::From1996To97 => Some(Self::From1997To98),
-            Self::From1997To98 => Some(Self::From1998To99),
-            Self::From1998To99 => Some(Self::From1999To00),
-            Self::From1999To00 => Some(Self::From2000To01),
-            Self::From2000To01 => Some(Self::From2001To02),
-            Self::From2001To02 => Some(Self::From2002To03),
-            Self::From2002To03 => Some(Self::From2003To04),
-            Self::From2003To04 => Some(Self::From2004To05),
-            Self::From2004To05 => Some(Self::From2005To06),
-            Self::From2005To06 => Some(Self::From2006To07),
-            Self::From2006To07 => Some(Self::From2007To08),
-            Self::From2007To08 => Some(Self::From2008To09),
-            Self::From2008To09 => Some(Self::From2009To10),
-            Self::From2009To10 => Some(Self::From2010To11),
-            Self::From2010To11 => Some(Self::From2011To12),
-            Self::From2011To12 => Some(Self::From2012To13),
-            Self::From2012To13 => Some(Self::From2013To14),
-            Self::From2013To14 => Some(Self::From2014To15),
-            Self::From2014To15 => Some(Self::From2015To16),
-            Self::From2015To16 => Some(Self::From2016To17),
-            Self::From2016To17 => Some(Self::From2017To18),
-            Self::From2017To18 => Some(Self::From2018To19),
-            Self::From2018To19 => Some(Self::From2019To20),
-            Self::From2019To20 => Some(Self::From2020To21),
-            Self::From2020To21 => Some(Self::From2021To22),
-            Self::From2021To22 => Some(Self::From2022To23),
-            Self::From2022To23 => None,
-        }
-    }
-}
-
-impl IntoIterator for SeasonSince1946 {
-    type Item = Self;
-    type IntoIter = SeasonSince1946Iterator;
-
-    fn into_iter(self) -> Self::IntoIter {
-        SeasonSince1946Iterator { next: Some(self) }
-    }
-}
-
-#[allow(missing_copy_implementations)]
-#[derive(Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
-pub struct SeasonSince1946Iterator {
-    next: Option<SeasonSince1946>,
-}
-
-impl Iterator for SeasonSince1946Iterator {
-    type Item = SeasonSince1946;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let next = self.next;
-        self.next = self.next.and_then(|s| s.next());
-        next
-    }
-}
-
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum SeasonSince1996 {
@@ -453,6 +343,61 @@ super::convert! {
         From2012To13,
         From2013To14,
         From2014To15,
+        From2015To16,
+        From2016To17,
+        From2017To18,
+        From2018To19,
+        From2019To20,
+        From2020To21,
+        From2021To22,
+        From2022To23,
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
+#[non_exhaustive]
+pub enum SeasonSince2015 {
+    #[serde(rename = "2015-16")]
+    From2015To16,
+
+    #[serde(rename = "2016-17")]
+    From2016To17,
+
+    #[serde(rename = "2017-18")]
+    From2017To18,
+
+    #[serde(rename = "2018-19")]
+    From2018To19,
+
+    #[serde(rename = "2019-20")]
+    From2019To20,
+
+    #[serde(rename = "2020-21")]
+    From2020To21,
+
+    #[serde(rename = "2021-22")]
+    From2021To22,
+
+    #[default]
+    #[serde(rename = "2022-23")]
+    From2022To23,
+}
+
+super::convert! {
+    SeasonSince2015 => SeasonSince1946 {
+        From2015To16,
+        From2016To17,
+        From2017To18,
+        From2018To19,
+        From2019To20,
+        From2020To21,
+        From2021To22,
+        From2022To23,
+    }
+}
+
+super::convert! {
+    SeasonSince2015 => SeasonSince1996 {
         From2015To16,
         From2016To17,
         From2017To18,

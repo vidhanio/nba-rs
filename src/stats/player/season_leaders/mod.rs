@@ -1,9 +1,9 @@
 mod parameters;
 
-pub use parameters::OfficialLeadersParameters;
+pub use parameters::SeasonLeadersParameters;
 
 crate::endpoint! {
-    OfficialLeaders(OfficialLeadersParameters): "leagueleaders" => {
+    SeasonLeaders(SeasonLeadersParameters): "leagueleaders" => {
     } => {
         league_leaders: LeagueLeadersRow("LeagueLeaders") {
             player_id: u32,

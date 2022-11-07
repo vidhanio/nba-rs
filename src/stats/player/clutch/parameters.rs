@@ -8,8 +8,8 @@ use crate::{
     stats::fields::{
         AheadOrBehind, ClutchTime, College, Conference, Country, Division, DraftPick, DraftYear,
         Experience, Half, Height, LastNGames, LeagueId, Location, MeasureType, Month, Outcome,
-        PerModePlayersGeneral, PlayoffRound, PointDiff, Position, Quarter, SeasonSegment,
-        SeasonSince1996, SeasonType, ShotClockRange, StarterOrBench, Team, Weight, YesOrNo,
+        PerMode, PlayoffRound, PointDiff, Position, Quarter, SeasonSegment, SeasonSince1996,
+        SeasonType, ShotClockRange, StarterOrBench, Team, Weight, YesOrNo,
     },
 };
 
@@ -19,7 +19,7 @@ use crate::{
 pub struct PlayersClutchParameters {
     pub measure_type: MeasureType,
 
-    pub per_mode: PerModePlayersGeneral,
+    pub per_mode: PerMode,
 
     pub plus_minus: YesOrNo,
 

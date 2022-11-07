@@ -1,0 +1,11 @@
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum TypeGrouping {
+    #[default]
+    #[serde(rename = "offensive")]
+    Offensive,
+
+    #[serde(rename = "defensive")]
+    Defensive,
+}

@@ -43,3 +43,27 @@ super::convert! {
         AllStar,
     }
 }
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SeasonTypeBasic {
+    #[default]
+    #[serde(rename = "Regular Season")]
+    RegularSeason,
+
+    #[serde(rename = "Playoffs")]
+    Playoffs,
+}
+
+super::convert! {
+    SeasonTypeBasic => SeasonType {
+        RegularSeason,
+        Playoffs,
+    }
+}
+
+super::convert! {
+    SeasonTypeBasic => SeasonTypeWithoutPlayIn {
+        RegularSeason,
+        Playoffs,
+    }
+}

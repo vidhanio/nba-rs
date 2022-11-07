@@ -33,7 +33,9 @@ reexport! {
     month;
     outcome;
     per_mode;
+    player_or_team;
     playoff_round;
+    play_type;
     point_diff;
     position;
     quarter;
@@ -45,6 +47,7 @@ reexport! {
     starter_or_bench;
     stat_category;
     team;
+    type_grouping;
     weight;
     yes_or_no;
 }

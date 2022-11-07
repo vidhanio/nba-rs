@@ -12,7 +12,7 @@ use crate::{
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "PascalCase")]
-pub struct OfficialLeadersParameters {
+pub struct SeasonLeadersParameters {
     #[serde(rename = "LeagueID")]
     pub league_id: LeagueId,
 
