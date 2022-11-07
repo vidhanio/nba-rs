@@ -1,10 +1,10 @@
 mod parameters;
 
 use crate::stats::fields::MeasureType;
-pub use parameters::PlayersGeneralOpponentParameters;
+pub use parameters::PlayersOpponentParameters;
 
 crate::endpoint! {
-    PlayersOpponent(PlayersGeneralOpponentParameters): "leagueplayerondetails" => {
+    PlayersOpponent(PlayersOpponentParameters): "leagueplayerondetails" => {
         measure_type: MeasureType::Opponent,
     } => {
         players_on_court_league_player_details: PlayersOnCourtLeaguePlayerDetailsRow("PlayersOnCourtLeaguePlayerDetails") {

@@ -12,7 +12,7 @@ use crate::{
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 #[serde(rename_all = "PascalCase")]
-pub struct PlayersGeneralOpponentParameters {
+pub struct PlayersOpponentParameters {
     pub measure_type: MeasureType,
 
     pub per_mode: PerModePlayersGeneral,
