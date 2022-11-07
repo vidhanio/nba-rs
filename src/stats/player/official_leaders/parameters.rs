@@ -5,8 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     serde::serde_optional_infallible,
     stats::fields::{
-        LeagueId, PerMode48 as PerMode, Scope, SeasonSince1946 as Season,
-        SeasonTypeWithoutPlayIn as SeasonType, StatCategory,
+        LeagueId, PerMode48, Scope, SeasonSince1946, SeasonTypeWithoutPlayIn, StatCategory,
     },
 };
 
@@ -17,13 +16,13 @@ pub struct OfficialLeadersParameters {
     #[serde(rename = "LeagueID")]
     pub league_id: LeagueId,
 
-    pub season: Season,
-
-    pub season_type: SeasonType,
-
-    pub per_mode: PerMode,
+    pub per_mode: PerMode48,
 
     pub stat_category: StatCategory,
+
+    pub season: SeasonSince1946,
+
+    pub season_type: SeasonTypeWithoutPlayIn,
 
     pub scope: Scope,
 

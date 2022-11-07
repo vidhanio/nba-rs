@@ -7,10 +7,9 @@ use crate::{
     serde::{serde_none_as_empty_string, serde_optional_date, serde_optional_infallible},
     stats::fields::{
         College, Conference, Country, Division, DraftPick, DraftYear, Experience, Half, Height,
-        LastNGames, LeagueId, Location, MeasureType, Month, Outcome,
-        PerModePlayersGeneral as PerMode, PlayoffRound, Position, Quarter, SeasonSegment,
-        SeasonSince1996 as Season, SeasonType, ShotClockRange, StarterOrBench, Team, Weight,
-        YesOrNo,
+        LastNGames, LeagueId, Location, MeasureType, Month, Outcome, PerModePlayersGeneral,
+        PlayoffRound, Position, Quarter, SeasonSegment, SeasonSince1996, SeasonType,
+        ShotClockRange, StarterOrBench, Team, Weight, YesOrNo,
     },
 };
 
@@ -20,7 +19,7 @@ use crate::{
 pub struct PlayersGeneralParameters {
     pub measure_type: MeasureType,
 
-    pub per_mode: PerMode,
+    pub per_mode: PerModePlayersGeneral,
 
     pub plus_minus: YesOrNo,
 
@@ -31,7 +30,7 @@ pub struct PlayersGeneralParameters {
     #[serde(rename = "LeagueID")]
     pub league_id: LeagueId,
 
-    pub season: Season,
+    pub season: SeasonSince1996,
 
     pub season_type: SeasonType,
 
