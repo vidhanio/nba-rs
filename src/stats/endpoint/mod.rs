@@ -1,3 +1,5 @@
+pub(crate) mod macros;
+
 use std::{borrow::Cow, future::Future, pin::Pin};
 
 use reqwest::{Client, Request};

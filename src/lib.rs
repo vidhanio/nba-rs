@@ -7,17 +7,15 @@
 #![warn(missing_copy_implementations)]
 #![allow(clippy::module_name_repetitions)]
 #![warn(missing_docs)]
-#![feature(associated_type_defaults)]
 
-use macros::endpoint;
 use once_cell::sync::Lazy;
 use reqwest::{
     header::{HeaderMap, HeaderValue, REFERER},
     Client,
 };
+use stats::endpoint::macros::endpoint;
 use thiserror::Error;
 
-mod macros;
 mod serde;
 pub mod stats;
 
