@@ -34,11 +34,13 @@ reexport! {
     playoff_round;
     position;
     quarter;
+    scope;
     season;
     season_segment;
     season_type;
     shot_clock_range;
     starter_or_bench;
+    stat_category;
     team;
     weight;
     yes_or_no;

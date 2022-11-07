@@ -1,9 +1,14 @@
 use std::convert::Infallible;
 
-use super::fields::{
-    serde_optional_infallible, LeagueId, PerMode, Scope, Season, SeasonType, StatCategory,
-};
 use serde::{Deserialize, Serialize};
+
+use crate::{
+    serde::serde_optional_infallible,
+    stats::fields::{
+        LeagueId, PerMode48 as PerMode, Scope, SeasonSince1946 as Season,
+        SeasonTypeWithoutPlayIn as SeasonType, StatCategory,
+    },
+};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

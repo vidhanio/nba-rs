@@ -1,11 +1,3 @@
-pub use crate::{
-    serde::serde_optional_infallible,
-    stats::fields::{
-        LeagueId, PerMode48 as PerMode, SeasonSince1946 as Season,
-        SeasonTypeWithoutPlayIn as SeasonType,
-    },
-};
-
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -40,14 +32,4 @@ pub enum StatCategory {
     #[default]
     #[serde(rename = "PTS")]
     Points,
-}
-
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub enum Scope {
-    #[default]
-    #[serde(rename = "S")]
-    AllPlayers,
-
-    #[serde(rename = "Rookies")]
-    Rookies,
 }
