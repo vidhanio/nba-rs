@@ -1,5 +1,5 @@
 use super::PlayersGeneralParameters;
-use crate::stats::fields::MeasureType;
+use crate::fields::MeasureType;
 
 crate::endpoint! {
     PlayersMisc(PlayersGeneralParameters): "leaguedashplayerstats" => {

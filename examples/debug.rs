@@ -1,8 +1,6 @@
 use nba::{
-    stats::{
-        fields::LeagueId,
-        player::playtype::{PlayersPlaytype, PlayersPlaytypeParameters},
-    },
+    fields::Season,
+    stats::player::general::{traditional::PlayersTraditional, PlayersGeneralParameters},
     Endpoint,
 };
 use tokio::{fs::File, io::AsyncWriteExt};
@@ -13,8 +11,8 @@ async fn main() -> color_eyre::Result<()> {
 
     let mut f = File::create("tmp/debug.txt").await?;
 
-    let endpoint = PlayersPlaytype::new(PlayersPlaytypeParameters {
-        league_id: LeagueId::GLeague,
+    let endpoint = PlayersTraditional::new(PlayersGeneralParameters {
+        season: Season(2020),
         ..Default::default()
     });
 

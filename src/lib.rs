@@ -16,6 +16,8 @@ use reqwest::{
 use stats::endpoint::macros::endpoint;
 use thiserror::Error;
 
+pub mod fields;
+pub mod live;
 mod serde;
 pub mod stats;
 

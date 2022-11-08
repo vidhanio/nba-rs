@@ -1,10 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    fields::{LeagueId, PerModeGame, PlayType, PlayerOrTeam, Season, SeasonType, TypeGrouping},
     serde::serde_player_or_team_char,
-    stats::fields::{
-        LeagueId, PerModeGame, PlayType, PlayerOrTeam, Season, SeasonType, TypeGrouping,
-    },
 };
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]

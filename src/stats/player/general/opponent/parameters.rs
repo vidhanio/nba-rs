@@ -2,11 +2,11 @@ use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    serde::{serde_none_as_empty_string, serde_optional_date},
-    stats::fields::{
+    fields::{
         Conference, Division, Half, LastNGames, LeagueId, Location, MeasureType, Month, Outcome,
         PerMode, Quarter, Season, SeasonSegment, SeasonType, Team, YesOrNo,
     },
+    serde::{serde_none_as_empty_string, serde_optional_date},
 };
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]

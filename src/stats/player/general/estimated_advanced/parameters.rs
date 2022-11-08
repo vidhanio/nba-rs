@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::stats::fields::{LeagueId, Season, SeasonType};
+use crate::fields::{LeagueId, Season, SeasonType};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

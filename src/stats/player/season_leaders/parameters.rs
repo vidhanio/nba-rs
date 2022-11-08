@@ -3,8 +3,8 @@ use std::convert::Infallible;
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    fields::{LeagueId, PerMode48, Scope, Season, SeasonTypeWithoutPlayIn, StatCategory},
     serde::serde_optional_infallible,
-    stats::fields::{LeagueId, PerMode48, Scope, Season, SeasonTypeWithoutPlayIn, StatCategory},
 };
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]

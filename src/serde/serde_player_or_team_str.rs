@@ -1,6 +1,6 @@
 use serde::{de, Deserialize, Deserializer, Serializer};
 
-use crate::stats::fields::PlayerOrTeam;
+use crate::fields::PlayerOrTeam;
 
 #[allow(clippy::trivially_copy_pass_by_ref)]
 pub fn serialize<S>(value: &PlayerOrTeam, serializer: S) -> Result<S::Ok, S::Error>

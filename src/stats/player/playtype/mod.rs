@@ -2,7 +2,7 @@ mod parameters;
 
 pub use parameters::PlayersPlaytypeParameters;
 
-use crate::stats::fields::PlayerOrTeam;
+use crate::fields::PlayerOrTeam;
 
 crate::endpoint! {
     PlayersPlaytype(PlayersPlaytypeParameters): "synergyplaytypes" => {

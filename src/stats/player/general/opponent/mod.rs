@@ -1,6 +1,6 @@
 mod parameters;
 
-use crate::stats::fields::MeasureType;
+use crate::fields::MeasureType;
 pub use parameters::PlayersOpponentParameters;
 
 crate::endpoint! {

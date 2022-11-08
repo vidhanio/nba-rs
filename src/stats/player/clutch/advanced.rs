@@ -1,5 +1,5 @@
 use super::PlayersClutchParameters;
-use crate::stats::fields::MeasureType;
+use crate::fields::MeasureType;
 
 crate::endpoint! {
     PlayersClutchAdvanced(PlayersClutchParameters): "leaguedashplayerclutch" => {
