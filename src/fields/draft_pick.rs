@@ -3,37 +3,37 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum DraftPick {
     #[serde(rename = "1st Round")]
-    Pick1stRound,
+    Round1,
 
     #[serde(rename = "2nd Round")]
-    Pick2ndRound,
+    Round2,
 
     #[serde(rename = "1st Pick")]
-    Pick1stPick,
+    First,
 
     #[serde(rename = "Lottery Pick")]
-    LotteryPick,
+    Lottery,
 
     #[serde(rename = "Top 5 Pick")]
-    Top5Pick,
+    Top5,
 
     #[serde(rename = "Top 10 Pick")]
-    Top10Pick,
+    Top10,
 
     #[serde(rename = "Top 15 Pick")]
-    Top15Pick,
+    Top15,
 
     #[serde(rename = "Top 20 Pick")]
-    Top20Pick,
+    Top20,
 
     #[serde(rename = "Top 25 Pick")]
-    Top25Pick,
+    Top25,
 
     #[serde(rename = "Picks 11 Thru 20")]
-    Picks11Thru20,
+    From11Thru20,
 
     #[serde(rename = "Picks 21 Thru 30")]
-    Picks21Thru30,
+    From21Thru30,
 
     #[serde(rename = "Undrafted")]
     Undrafted,

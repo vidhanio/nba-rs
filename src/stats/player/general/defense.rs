@@ -1,11 +1,14 @@
 use super::PlayersGeneralParameters;
 use crate::fields::MeasureType;
 
-crate::endpoint! {
-    PlayersDefense(PlayersGeneralParameters): "leaguedashplayerstats" => {
-        measure_type: MeasureType::Defense,
-    } => {
-        league_dash_player_stats: LeagueDashPlayerStatsRow("LeagueDashPlayerStats") {
+crate::endpoint! { "leaguedashplayerstats"
+
+    PlayersDefense(
+        PlayersGeneralParameters {
+            measure_type: MeasureType::Defense,
+        }
+    ) {
+        league_dash_player_stats["LeagueDashPlayerStats"]: LeagueDashPlayerStatsRow {
             player_id: u32,
             player_name: String,
             nickname: String,
@@ -48,8 +51,6 @@ crate::endpoint! {
             opp_pts_fb_rank: u32,
             opp_pts_paint_rank: u32,
             def_ws_rank: u32,
-            cfid: u32,
-            cfparams: String,
         },
     }
 }

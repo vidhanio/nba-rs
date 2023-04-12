@@ -1,17 +1,20 @@
 macro_rules! endpoint {
-    {
-        $name:ident($params:ident): $endpoint:literal => {
+    { $endpoint:literal
+
+        $name:ident($params:ident
             $(
-                $df:ident: $dv:expr,
-            )*
-        } => {
+            {
+                $($df:ident: $dv:expr,)*
+            }
+            )?
+        ) {
             $(
-                $rn:ident: $rs:ident($rl:literal) {
-                    $(
-                        $(#[$rfattr:meta])*
-                        $rf:ident: $rty:ty,
-                    )*
-                },
+            $rn:ident[$rl:literal]: $rs:ident {
+                $(
+                $(#[$rfattr:meta])*
+                $rf:ident: $rty:ty,
+                )*
+            },
             )*
         }
     } => {
@@ -37,24 +40,24 @@ macro_rules! endpoint {
 
             fn parameters(&self) -> Self::Parameters {
                 Self::Parameters {
-                    $(
-                        $df: $dv,
-                    )*
+                    $($(
+                    $df: $dv,
+                    )*)?
                     ..self.params
                 }
             }
         }
 
         $(
-            #[allow(missing_copy_implementations)]
-            #[allow(clippy::derive_partial_eq_without_eq)]
-            #[derive(Clone, Debug, Default, PartialEq, ::serde::Serialize)]
-            pub struct $rs {
-                $(
-                    $(#[$rfattr])*
-                    pub $rf: $rty
-                ),*
-            }
+        #[allow(missing_copy_implementations)]
+        #[allow(clippy::derive_partial_eq_without_eq)]
+        #[derive(Clone, Debug, Default, PartialEq, ::serde::Serialize)]
+        pub struct $rs {
+            $(
+            $(#[$rfattr])*
+            pub $rf: $rty
+            ),*
+        }
         )*
 
         #[allow(missing_copy_implementations)]
@@ -64,7 +67,7 @@ macro_rules! endpoint {
         #[serde(rename_all = "camelCase")]
         pub struct ResultSets {
             $(
-                pub $rn: Vec<$rs>,
+            pub $rn: Vec<$rs>,
             )*
         }
 
@@ -76,52 +79,71 @@ macro_rules! endpoint {
             fn try_from(basic: Vec<$crate::BasicResultSet>) -> Result<Self, Self::Error> {
                 basic
                     .into_iter()
-                    .try_fold(
-                        Self::default(),
-                        |mut result_sets, mut rs| {
-                            let mut index_hm = rs
-                                .headers
-                                .iter()
-                                .enumerate()
-                                .map(|(i, h)| (h.to_lowercase(), i))
-                                .collect::<::std::collections::HashMap<_, _>>();
+                    .try_fold(Self::default(), |mut result_sets, mut rs| {
+                        // map headers to indices
+                        let mut index_hm = rs
+                            .headers
+                            .iter()
+                            .enumerate()
+                            .map(|(i, h)| (h.to_lowercase(), i))
+                            .collect::<::std::collections::HashMap<_, _>>();
 
-
-                            match rs.name.as_str() {
+                        // match result set
+                        match rs.name.as_str() {
+                            $(
+                            $rl => {
+                                // add missing headers which are null
                                 $(
-                                    $rl => {
-                                        $(
-                                            index_hm.entry(stringify!($rf).to_owned()).or_insert_with_key(|rf| {
-                                                rs.headers.push(rf.to_owned());
-                                                rs.headers.len() - 1
-                                            });
-                                        )*
-
-                                        rs.row_set.iter_mut().for_each(|row| row.resize(rs.headers.len(), ::serde_json::Value::Null));
-
-                                        result_sets.$rn = rs.row_set
-                                            .into_iter()
-                                            .map(|row| Ok($rs {
-                                                $(
-                                                    $rf: row
-                                                        .get(*index_hm
-                                                            .get(stringify!($rf).to_lowercase().as_str())
-                                                            .expect("every header should be present in `index_hm`"))
-                                                        .cloned()
-                                                        .map(::serde_json::from_value)
-                                                        .expect("every field should be present in `row`")
-                                                        .map_err(|e| format!("failed to parse field `{}`: {}", stringify!($rf), e))?,
-                                                )*
-                                            }))
-                                            .collect::<Result<_, String>>()?;
-
-                                        Ok(result_sets)
-                                    },
+                                index_hm.entry(stringify!($rf).to_owned()).or_insert_with_key(|rf| {
+                                    rs.headers.push(rf.to_owned());
+                                    rs.headers.len() - 1
+                                });
                                 )*
-                                _ => Err(format!("unknown result set: `{}`", rs.name)),
+
+                                rs.row_set.iter_mut().for_each(|row| {
+                                    row.resize(rs.headers.len(), ::serde_json::Value::Null)
+                                });
+
+                                result_sets.$rn = rs
+                                    .row_set
+                                    .into_iter()
+                                    .map(|row| {
+                                        Ok($rs {
+                                            $(
+                                            $rf: row
+                                                .get(
+                                                    *index_hm
+                                                        .get(stringify!($rf).to_lowercase().as_str())
+                                                        .ok_or_else(|| {
+                                                            format!(
+                                                                "header should be present: {}",
+                                                                stringify!($rf)
+                                                            )
+                                                        })?,
+                                                )
+                                                .cloned()
+                                                .map(::serde_json::from_value)
+                                                .ok_or_else(|| {
+                                                    format!("field should be present: {}", stringify!($rf))
+                                                })?
+                                                .map_err(|e| {
+                                                    format!(
+                                                        "failed to parse field `{}`: {}",
+                                                        stringify!($rf),
+                                                        e
+                                                    )
+                                                })?,
+                                            )*
+                                        })
+                                    })
+                                    .collect::<Result<_, String>>()?;
+
+                                Ok(result_sets)
                             }
-                        },
-                    )
+                            )*
+                            _ => Err(format!("unknown result set: `{}`", rs.name)),
+                        }
+                    })
             }
         }
 
@@ -130,11 +152,30 @@ macro_rules! endpoint {
             where
                 D: ::serde::Deserializer<'de>,
             {
-                let raw = $crate::serde::vec_or_single::VecOrSingle::<$crate::BasicResultSet>::deserialize(deserializer)?.into_vec();
+                let raw =
+                    $crate::serde::vec_or_single::VecOrSingle::<$crate::BasicResultSet>::deserialize(
+                        deserializer,
+                    )?
+                    .into_vec();
 
                 raw.try_into().map_err(::serde::de::Error::custom)
             }
         }
-    };
+
+        #[cfg(test)]
+        mod tests {
+            use $crate::Endpoint;
+
+            use super::*;
+
+            #[::tokio::test]
+            async fn works() {
+                $name::new(::std::default::Default::default())
+                    .send()
+                    .await
+                    .unwrap();
+            }
+        }
+    }
 }
 pub(crate) use endpoint;

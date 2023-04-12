@@ -1,3 +1,7 @@
+//! The NBA Live Stats API.
+
+#![allow(missing_docs)]
+
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
@@ -132,7 +136,7 @@ pub struct Team {
     periods: Vec<Period>,
 }
 
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Period {
     #[serde(rename = "period")]
     period: i64,
@@ -194,7 +198,7 @@ pub struct PbOdds {
     suspended: i64,
 }
 
-#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PeriodType {
     #[default]
     #[serde(rename = "REGULAR")]

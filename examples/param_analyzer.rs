@@ -1,29 +1,33 @@
-use heck::AsPascalCase;
-use tokio::fs;
+use futures::TryStreamExt;
+use heck::{AsPascalCase, ToPascalCase};
+use tokio::io::{stdin, AsyncBufReadExt, BufReader};
+use tokio_stream::wrappers::LinesStream;
 
 #[tokio::main]
 async fn main() -> color_eyre::Result<()> {
-    let input = fs::read_to_string("tmp/input.txt").await?;
-    let mut lines = input.lines();
-    let name = AsPascalCase(lines.next().unwrap().split_once(' ').unwrap().1);
+    let mut lines = LinesStream::new(BufReader::new(stdin()).lines());
+    let header = lines.try_next().await?.unwrap();
+    let name = AsPascalCase(header.split_once(' ').unwrap().1);
 
     let mut repr = false;
     let mut default_blank = false;
     let variants = lines
-        .map(|line| {
+        .map_ok(|line| {
             let mut split = line.trim_matches('"').splitn(3, '|');
             let default = split.next().unwrap() == "DEFAULT";
-            let name = AsPascalCase(split.next().unwrap());
-            let rename = split.next().unwrap();
+            let name = split.next().unwrap().to_pascal_case();
+            let rename = split.next().unwrap().to_owned();
             if rename.is_empty() {
                 default_blank = true;
             }
             if rename.chars().all(char::is_numeric) {
                 repr = true;
             }
+
             (default, name, rename)
         })
-        .collect::<Vec<_>>();
+        .try_collect::<Vec<_>>()
+        .await?;
 
     println!(
         "#[derive(Clone, Copy, Debug, {}PartialEq, Eq, Serialize{}, Deserialize{})]",

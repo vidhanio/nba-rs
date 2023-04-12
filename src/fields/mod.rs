@@ -15,6 +15,7 @@ macro_rules! reexport {
 }
 
 reexport! {
+    active_flag;
     ahead_or_behind;
     clutch_time;
     college;

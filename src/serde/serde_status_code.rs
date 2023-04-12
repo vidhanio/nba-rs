@@ -4,6 +4,7 @@ use serde::{self, de, Deserialize, Deserializer, Serializer};
 /// # Errors
 ///
 /// Returns an error if serialization fails.
+#[allow(clippy::trivially_copy_pass_by_ref)]
 pub fn serialize<S>(date: &StatusCode, serializer: S) -> Result<S::Ok, S::Error>
 where
     S: Serializer,
@@ -21,7 +22,7 @@ where
     let status_code = u16::deserialize(deserializer)?;
     StatusCode::from_u16(status_code).map_err(|_| {
         de::Error::invalid_value(
-            de::Unexpected::Unsigned(status_code as u64),
+            de::Unexpected::Unsigned(status_code.into()),
             &"a valid HTTP status code",
         )
     })

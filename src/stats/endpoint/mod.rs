@@ -1,15 +1,15 @@
 pub(crate) mod macros;
 
-use std::{borrow::Cow, future::Future, pin::Pin};
+use std::borrow::Cow;
 
+use async_trait::async_trait;
 use reqwest::{Client, Request};
 use serde::{de::DeserializeOwned, Serialize};
 
 use crate::{BasicResponse, Response, Result, CLIENT};
 
-type BoxedResultFuture<'a, T> = Pin<Box<dyn Future<Output = Result<T>> + Send + 'a>>;
-
 /// A trait which represents an endpoint in the NBA Stats API.
+#[async_trait]
 pub trait Endpoint: Sync {
     /// The type of the parameters used to generate the response.
     type Parameters: Serialize + DeserializeOwned;
@@ -43,81 +43,50 @@ pub trait Endpoint: Sync {
     /// Sends a request to the endpoint and returns the response
     /// deserialized to [`Response<Self::Parameters,
     /// Self::ResultSets>`] using [`crate::CLIENT`].
-    fn send<'s, 'f>(&'s self) -> BoxedResultFuture<'f, Response<Self::Parameters, Self::ResultSets>>
-    where
-        's: 'f,
-    {
-        Box::pin(async move { self.send_with_client(&CLIENT).await })
+    async fn send(&self) -> Result<Response<Self::Parameters, Self::ResultSets>> {
+        self.send_with_client(&CLIENT).await
     }
 
     /// Sends a request to the endpoint and returns the response
     /// deserialized to [`Response<Self::Parameters,
     /// Self::ResultSets>`] using the provided [`reqwest::Client`].
-    fn send_with_client<'s, 'c, 'f>(
-        &'s self,
-        client: &'c Client,
-    ) -> BoxedResultFuture<'f, Response<Self::Parameters, Self::ResultSets>>
-    where
-        's: 'f,
-        'c: 'f,
-    {
-        Box::pin(async move {
-            self.send_raw_with_client(client)
-                .await?
-                .json()
-                .await
-                .map_err(Into::into)
-        })
+    async fn send_with_client(
+        &self,
+        client: &Client,
+    ) -> Result<Response<Self::Parameters, Self::ResultSets>> {
+        self.send_raw_with_client(client)
+            .await?
+            .json()
+            .await
+            .map_err(Into::into)
     }
 
     /// Sends a request to the endpoint and returns the response
     /// deserialized to [`BasicResponse`] using [`crate::CLIENT`].
-    fn send_basic<'s, 'f>(&'s self) -> BoxedResultFuture<'f, BasicResponse>
-    where
-        's: 'f,
-    {
-        Box::pin(async move { self.send_basic_with_client(&CLIENT).await })
+    async fn send_basic(&self) -> Result<BasicResponse> {
+        self.send_basic_with_client(&CLIENT).await
     }
 
     /// Sends a request to the endpoint and returns the response
     /// deserialized to [`BasicResponse`] using the provided
     /// [`reqwest::Client`].
-    fn send_basic_with_client<'s, 'c, 'f>(
-        &'s self,
-        client: &'c Client,
-    ) -> BoxedResultFuture<'f, BasicResponse>
-    where
-        's: 'f,
-        'c: 'f,
-    {
-        Box::pin(async move {
-            self.send_raw_with_client(client)
-                .await?
-                .json()
-                .await
-                .map_err(Into::into)
-        })
+    async fn send_basic_with_client(&self, client: &Client) -> Result<BasicResponse> {
+        self.send_raw_with_client(client)
+            .await?
+            .json()
+            .await
+            .map_err(Into::into)
     }
 
     /// Sends a request to the endpoint and returns the response as a
     /// [`reqwest::Response`] using [`crate::CLIENT`].
-    fn send_raw<'s, 'f>(&'s self) -> BoxedResultFuture<'f, reqwest::Response>
-    where
-        's: 'f,
-    {
-        Box::pin(async move { self.send_raw_with_client(&CLIENT).await })
+    async fn send_raw(&self) -> Result<reqwest::Response> {
+        self.send_raw_with_client(&CLIENT).await
     }
 
     /// Sends a request to the endpoint and returns the response as a
     /// [`reqwest::Response`] using the provided [`reqwest::Client`].
-    fn send_raw_with_client<'s, 'c, 'f>(
-        &'s self,
-        client: &'c Client,
-    ) -> BoxedResultFuture<'f, reqwest::Response>
-    where
-        's: 'f,
-        'c: 'f,
-    {
-        Box::pin(async move { client.execute(self.to_request()).await.map_err(Into::into) })
+    async fn send_raw_with_client(&self, client: &Client) -> Result<reqwest::Response> {
+        client.execute(self.to_request()).await.map_err(Into::into)
     }
 }

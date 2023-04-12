@@ -1,12 +1,12 @@
-use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
+use time::Date;
 
 use crate::{
     fields::{
         Conference, Division, Half, LastNGames, LeagueId, Location, MeasureType, Month, Outcome,
         PerMode, Quarter, Season, SeasonSegment, SeasonType, Team, YesOrNo,
     },
-    serde::{serde_none_as_empty_string, serde_optional_date},
+    serde::{serde_optional_date, serialize_none_as_empty_string},
 };
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -34,33 +34,33 @@ pub struct PlayersOpponentParameters {
     #[serde(rename = "TeamID")]
     pub team_id: Team,
 
-    #[serde(serialize_with = "serde_none_as_empty_string")]
+    #[serde(serialize_with = "serialize_none_as_empty_string")]
     pub outcome: Option<Outcome>,
 
-    #[serde(serialize_with = "serde_none_as_empty_string")]
+    #[serde(serialize_with = "serialize_none_as_empty_string")]
     pub location: Option<Location>,
 
     pub month: Month,
 
-    #[serde(serialize_with = "serde_none_as_empty_string")]
+    #[serde(serialize_with = "serialize_none_as_empty_string")]
     pub season_segment: Option<SeasonSegment>,
 
     #[serde(with = "serde_optional_date")]
-    pub date_from: Option<NaiveDateTime>,
+    pub date_from: Option<Date>,
 
     #[serde(with = "serde_optional_date")]
-    pub date_to: Option<NaiveDateTime>,
+    pub date_to: Option<Date>,
 
     #[serde(rename = "OpponentTeamID")]
     pub opponent_team_id: Team,
 
-    #[serde(serialize_with = "serde_none_as_empty_string")]
+    #[serde(serialize_with = "serialize_none_as_empty_string")]
     pub vs_conference: Option<Conference>,
 
-    #[serde(serialize_with = "serde_none_as_empty_string")]
+    #[serde(serialize_with = "serialize_none_as_empty_string")]
     pub vs_division: Option<Division>,
 
-    #[serde(serialize_with = "serde_none_as_empty_string")]
+    #[serde(serialize_with = "serialize_none_as_empty_string")]
     pub game_segment: Option<Half>,
 
     pub period: Quarter,

@@ -21,7 +21,7 @@ pub mod live;
 mod serde;
 pub mod stats;
 
-pub use stats::{
+pub use self::stats::{
     endpoint::Endpoint,
     response::{
         basic::{BasicResponse, BasicResultSet},
@@ -29,17 +29,21 @@ pub use stats::{
     },
 };
 
-use std::fmt::Debug;
-
 /// The default [`reqwest::Client`] used by [`Endpoint`]s.
 ///
 /// This client is configured to use the NBA Stats API's referer by default.
 pub static CLIENT: Lazy<Client> = Lazy::new(|| {
-    let mut headers = HeaderMap::new();
-    headers.insert(REFERER, HeaderValue::from_static("https://stats.nba.com/"));
+    let headers = {
+        let mut headers = HeaderMap::new();
+
+        headers.insert(REFERER, HeaderValue::from_static("https://www.nba.com/"));
+
+        headers
+    };
 
     Client::builder()
         .default_headers(headers)
+        .cookie_store(true)
         .build()
         .expect("static client should build")
 });

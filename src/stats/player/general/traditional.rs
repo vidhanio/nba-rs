@@ -1,11 +1,14 @@
 use super::PlayersGeneralParameters;
 use crate::fields::MeasureType;
 
-crate::endpoint! {
-    PlayersTraditional(PlayersGeneralParameters): "leaguedashplayerstats" => {
-        measure_type: MeasureType::Base,
-    } => {
-        league_dash_player_stats: LeagueDashPlayerStatsRow("LeagueDashPlayerStats") {
+crate::endpoint! { "leaguedashplayerstats"
+
+    PlayersTraditional(
+        PlayersGeneralParameters {
+            measure_type: MeasureType::Base,
+        }
+    ) {
+        league_dash_player_stats["LeagueDashPlayerStats"]: LeagueDashPlayerStatsRow {
             player_id: u32,
             player_name: String,
             nickname: String,
@@ -20,9 +23,9 @@ crate::endpoint! {
             fgm: f64,
             fga: f64,
             fg_pct: f64,
-            fg3m: f64,
-            fg3a: f64,
-            fg3_pct: f64,
+            fg3m: Option<f64>,
+            fg3a: Option<f64>,
+            fg3_pct: Option<f64>,
             ftm: f64,
             fta: f64,
             ft_pct: f64,
@@ -50,9 +53,9 @@ crate::endpoint! {
             fgm_rank: u32,
             fga_rank: u32,
             fg_pct_rank: u32,
-            fg3m_rank: u32,
-            fg3a_rank: u32,
-            fg3_pct_rank: u32,
+            fg3m_rank: Option<u32>,
+            fg3a_rank: Option<u32>,
+            fg3_pct_rank: Option<u32>,
             ftm_rank: u32,
             fta_rank: u32,
             ft_pct_rank: u32,
@@ -72,8 +75,6 @@ crate::endpoint! {
             dd2_rank: u32,
             td3_rank: u32,
             wnba_fantasy_pts_rank: u32,
-            cfid: u32,
-            cfparams: String,
         },
     }
 }

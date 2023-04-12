@@ -3,11 +3,14 @@ mod parameters;
 use crate::fields::MeasureType;
 pub use parameters::PlayersOpponentParameters;
 
-crate::endpoint! {
-    PlayersOpponent(PlayersOpponentParameters): "leagueplayerondetails" => {
-        measure_type: MeasureType::Opponent,
-    } => {
-        players_on_court_league_player_details: PlayersOnCourtLeaguePlayerDetailsRow("PlayersOnCourtLeaguePlayerDetails") {
+crate::endpoint! { "leagueplayerondetails"
+
+    PlayersOpponent(
+        PlayersOpponentParameters {
+            measure_type: MeasureType::Opponent,
+        }
+    ) {
+        players_on_court_league_player_details["PlayersOnCourtLeaguePlayerDetails"]: PlayersOnCourtLeaguePlayerDetailsRow {
             group_set: String,
             team_id: u32,
             team_abbreviation: String,
@@ -23,9 +26,9 @@ crate::endpoint! {
             opp_fgm: f64,
             opp_fga: f64,
             opp_fg_pct: f64,
-            opp_fg3m: f64,
-            opp_fg3a: f64,
-            opp_fg3_pct: f64,
+            opp_fg3m: Option<f64>,
+            opp_fg3a: Option<f64>,
+            opp_fg3_pct: Option<f64>,
             opp_ftm: f64,
             opp_fta: f64,
             opp_ft_pct: f64,
@@ -49,9 +52,9 @@ crate::endpoint! {
             opp_fgm_rank: u32,
             opp_fga_rank: u32,
             opp_fg_pct_rank: u32,
-            opp_fg3m_rank: u32,
-            opp_fg3a_rank: u32,
-            opp_fg3_pct_rank: u32,
+            opp_fg3m_rank: Option<u32>,
+            opp_fg3a_rank: Option<u32>,
+            opp_fg3_pct_rank: Option<u32>,
             opp_ftm_rank: u32,
             opp_fta_rank: u32,
             opp_ft_pct_rank: u32,

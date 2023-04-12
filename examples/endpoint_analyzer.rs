@@ -1,8 +1,4 @@
-use std::{env, fmt::Write};
-
-use color_eyre::eyre::eyre;
 use nba::BasicResponse;
-use tokio::fs;
 
 fn to_type(header: &str, val: serde_json::Value) -> &'static str {
     match header {
@@ -22,12 +18,10 @@ fn to_type(header: &str, val: serde_json::Value) -> &'static str {
     }
 }
 
+#[fncli::cli]
 #[tokio::main]
-async fn main() -> color_eyre::Result<()> {
+async fn main(url: String) -> color_eyre::Result<()> {
     color_eyre::install()?;
-
-    let mut args = env::args();
-    let url = args.nth(1).ok_or_else(|| eyre!("missing argument: url"))?;
 
     let resp = nba::CLIENT
         .get(url)
@@ -36,39 +30,35 @@ async fn main() -> color_eyre::Result<()> {
         .json::<BasicResponse>()
         .await?;
 
-    let mut s = "\n".to_owned();
+    println!();
 
-    Vec::from(resp.result_sets).into_iter().try_for_each(|rs| {
+    resp.result_sets.into_vec().into_iter().for_each(|rs| {
         if rs.row_set.is_empty() {
-            return Ok(());
+            return;
         }
 
-        writeln!(
-            s,
-            "        {}: {}Row({:?}) {{",
+        println!(
+            "        {}[{:?}]: {}Row {{",
             heck::AsSnakeCase(&rs.name),
+            rs.name,
             heck::AsUpperCamelCase(&rs.name),
-            rs.name
-        )?;
+        );
 
         rs.headers
             .into_iter()
             .zip(rs.row_set[0].clone())
-            .try_for_each(|(header, val)| {
-                writeln!(
-                    s,
+            .for_each(|(header, val)| {
+                println!(
                     "            {}: {},",
                     header.to_lowercase(),
                     to_type(&header, val)
                 )
-            })?;
+            });
 
-        writeln!(s, "        }},")
-    })?;
+        println!("        }},");
+    });
 
-    write!(s, "    ")?;
-
-    fs::write("tmp/analyzer.txt", s).await?;
+    print!("    ");
 
     Ok(())
 }

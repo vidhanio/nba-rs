@@ -1,11 +1,14 @@
 use super::PlayersClutchParameters;
 use crate::fields::MeasureType;
 
-crate::endpoint! {
-    PlayersClutchMisc(PlayersClutchParameters): "leaguedashplayerclutch" => {
-        measure_type: MeasureType::Misc,
-    } => {
-        league_dash_player_clutch: LeagueDashPlayerClutchRow("LeagueDashPlayerClutch") {
+crate::endpoint! { "leaguedashplayerclutch"
+
+    PlayersClutchMisc(
+        PlayersClutchParameters {
+            measure_type: MeasureType::Misc,
+        }
+    ) {
+        league_dash_player_clutch["LeagueDashPlayerClutch"]: LeagueDashPlayerClutchRow {
             group_set: String,
             player_id: u32,
             player_name: String,
@@ -49,8 +52,6 @@ crate::endpoint! {
             pf_rank: u32,
             pfd_rank: u32,
             nba_fantasy_pts_rank: u32,
-            cfid: u32,
-            cfparams: String,
         },
     }
 }

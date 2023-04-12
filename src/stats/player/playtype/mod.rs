@@ -4,11 +4,14 @@ pub use parameters::PlayersPlaytypeParameters;
 
 use crate::fields::PlayerOrTeam;
 
-crate::endpoint! {
-    PlayersPlaytype(PlayersPlaytypeParameters): "synergyplaytypes" => {
-        player_or_team: PlayerOrTeam::Player,
-    } => {
-        synergy_play_type: SynergyPlayTypeRow("SynergyPlayType") {
+crate::endpoint! { "synergyplaytypes"
+
+    PlayersPlaytype(
+        PlayersPlaytypeParameters {
+            player_or_team: PlayerOrTeam::Player,
+        }
+    ) {
+        synergy_play_type["SynergyPlayType"]: SynergyPlayTypeRow {
             season_id: String,
             player_id: u32,
             player_name: String,

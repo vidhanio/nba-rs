@@ -45,6 +45,35 @@ super::convert_subset! {
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SeasonTypeBasicWithPreseason {
+    #[default]
+    #[serde(rename = "Regular Season")]
+    RegularSeason,
+
+    #[serde(rename = "Playoffs")]
+    Playoffs,
+
+    #[serde(rename = "Pre Season")]
+    PreSeason,
+}
+
+super::convert_subset! {
+    SeasonTypeBasicWithPreseason => SeasonType {
+        RegularSeason,
+        Playoffs,
+        PreSeason,
+    }
+}
+
+super::convert_subset! {
+    SeasonTypeBasicWithPreseason => SeasonTypeWithoutPlayIn {
+        RegularSeason,
+        Playoffs,
+        PreSeason,
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub enum SeasonTypeBasic {
     #[default]
     #[serde(rename = "Regular Season")]
@@ -63,6 +92,13 @@ super::convert_subset! {
 
 super::convert_subset! {
     SeasonTypeBasic => SeasonTypeWithoutPlayIn {
+        RegularSeason,
+        Playoffs,
+    }
+}
+
+super::convert_subset! {
+    SeasonTypeBasic => SeasonTypeBasicWithPreseason {
         RegularSeason,
         Playoffs,
     }

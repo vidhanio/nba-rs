@@ -1,10 +1,7 @@
-use std::convert::Infallible;
-
 use serde::{Deserialize, Serialize};
 
-use crate::{
-    fields::{LeagueId, PerMode48, Scope, Season, SeasonTypeWithoutPlayIn, StatCategory},
-    serde::serde_optional_infallible,
+use crate::fields::{
+    ActiveFlag, LeagueId, PerMode48, Scope, Season, SeasonTypeWithoutPlayIn, StatCategorySimple,
 };
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -16,7 +13,7 @@ pub struct SeasonLeadersParameters {
 
     pub per_mode: PerMode48,
 
-    pub stat_category: StatCategory,
+    pub stat_category: StatCategorySimple,
 
     pub season: Season,
 
@@ -24,6 +21,5 @@ pub struct SeasonLeadersParameters {
 
     pub scope: Scope,
 
-    #[serde(with = "serde_optional_infallible")]
-    pub active_flag: Option<Infallible>,
+    pub active_flag: Option<ActiveFlag>,
 }

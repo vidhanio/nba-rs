@@ -10,7 +10,7 @@ pub mod serde_player_or_team_str;
 pub mod serde_status_code;
 pub mod vec_or_single;
 
-pub fn serde_none_as_empty_string<T: Serialize, S>(
+pub fn serialize_none_as_empty_string<T: Serialize, S>(
     value: &Option<T>,
     serializer: S,
 ) -> Result<S::Ok, S::Error>

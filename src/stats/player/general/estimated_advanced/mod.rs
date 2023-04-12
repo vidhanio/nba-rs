@@ -2,10 +2,10 @@ mod parameters;
 
 pub use parameters::PlayersEstimatedAdvancedParameters;
 
-crate::endpoint! {
-    PlayersEstimatedAdvanced(PlayersEstimatedAdvancedParameters): "playerestimatedmetrics" => {
-    } => {
-        player_estimated_metrics: PlayerEstimatedMetricsRow("PlayerEstimatedMetrics") {
+crate::endpoint! { "playerestimatedmetrics"
+
+    PlayersEstimatedAdvanced(PlayersEstimatedAdvancedParameters) {
+        player_estimated_metrics["PlayerEstimatedMetrics"]: PlayerEstimatedMetricsRow {
             player_id: u32,
             player_name: String,
             gp: u32,
