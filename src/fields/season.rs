@@ -1,6 +1,6 @@
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Season(pub u32);
 
 impl Default for Season {
@@ -52,7 +52,7 @@ impl Serialize for Season {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum AllTime {
     #[default]
     #[serde(rename = "All Time")]

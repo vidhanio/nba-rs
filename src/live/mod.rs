@@ -78,7 +78,7 @@ pub struct Game {
     game_clock: String,
 
     // TODO: use `chrono` instead.
-    #[serde(rename = "gameTimeUTC")]
+    #[serde(rename(deserialize = "gameTimeUTC"))]
     game_time_utc: String,
 
     game_et: String,
@@ -102,49 +102,49 @@ pub struct Game {
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Team {
-    #[serde(rename = "teamId")]
+    #[serde(rename(deserialize = "teamId"))]
     team_id: i64,
 
-    #[serde(rename = "teamName")]
+    #[serde(rename(deserialize = "teamName"))]
     team_name: String,
 
-    #[serde(rename = "teamCity")]
+    #[serde(rename(deserialize = "teamCity"))]
     team_city: String,
 
-    #[serde(rename = "teamTricode")]
+    #[serde(rename(deserialize = "teamTricode"))]
     team_tricode: String,
 
-    #[serde(rename = "wins")]
+    #[serde(rename(deserialize = "wins"))]
     wins: i64,
 
-    #[serde(rename = "losses")]
+    #[serde(rename(deserialize = "losses"))]
     losses: i64,
 
-    #[serde(rename = "score")]
+    #[serde(rename(deserialize = "score"))]
     score: i64,
 
-    #[serde(rename = "seed")]
+    #[serde(rename(deserialize = "seed"))]
     seed: Option<serde_json::Value>,
 
-    #[serde(rename = "inBonus")]
+    #[serde(rename(deserialize = "inBonus"))]
     in_bonus: Option<serde_json::Value>,
 
-    #[serde(rename = "timeoutsRemaining")]
+    #[serde(rename(deserialize = "timeoutsRemaining"))]
     timeouts_remaining: i64,
 
-    #[serde(rename = "periods")]
+    #[serde(rename(deserialize = "periods"))]
     periods: Vec<Period>,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Period {
-    #[serde(rename = "period")]
+    #[serde(rename(deserialize = "period"))]
     period: i64,
 
-    #[serde(rename = "periodType")]
+    #[serde(rename(deserialize = "periodType"))]
     period_type: PeriodType,
 
-    #[serde(rename = "score")]
+    #[serde(rename(deserialize = "score"))]
     score: i64,
 }
 
@@ -158,49 +158,49 @@ pub struct GameLeaders {
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Leaders {
-    #[serde(rename = "personId")]
+    #[serde(rename(deserialize = "personId"))]
     person_id: i64,
 
-    #[serde(rename = "name")]
+    #[serde(rename(deserialize = "name"))]
     name: String,
 
-    #[serde(rename = "jerseyNum")]
+    #[serde(rename(deserialize = "jerseyNum"))]
     jersey_num: String,
 
-    #[serde(rename = "position")]
+    #[serde(rename(deserialize = "position"))]
     position: String,
 
-    #[serde(rename = "teamTricode")]
+    #[serde(rename(deserialize = "teamTricode"))]
     team_tricode: String,
 
-    #[serde(rename = "playerSlug")]
+    #[serde(rename(deserialize = "playerSlug"))]
     player_slug: Option<serde_json::Value>,
 
-    #[serde(rename = "points")]
+    #[serde(rename(deserialize = "points"))]
     points: i64,
 
-    #[serde(rename = "rebounds")]
+    #[serde(rename(deserialize = "rebounds"))]
     rebounds: i64,
 
-    #[serde(rename = "assists")]
+    #[serde(rename(deserialize = "assists"))]
     assists: i64,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PbOdds {
-    #[serde(rename = "team")]
+    #[serde(rename(deserialize = "team"))]
     team: Option<serde_json::Value>,
 
-    #[serde(rename = "odds")]
+    #[serde(rename(deserialize = "odds"))]
     odds: i64,
 
-    #[serde(rename = "suspended")]
+    #[serde(rename(deserialize = "suspended"))]
     suspended: i64,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PeriodType {
     #[default]
-    #[serde(rename = "REGULAR")]
+    #[serde(rename(deserialize = "REGULAR"))]
     Regular,
 }

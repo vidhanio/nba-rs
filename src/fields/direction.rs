@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub enum PlayerOrTeam {
+pub enum Direction {
     #[default]
-    #[serde(rename = "P")]
-    Player,
+    #[serde(rename = "DESC")]
+    Descending,
 
-    #[serde(rename = "T")]
-    Team,
+    #[serde(rename = "ASC")]
+    Ascending,
 }

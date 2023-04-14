@@ -23,12 +23,20 @@ crate::endpoint! { "leaguedashplayerclutch"
             min: f64,
             e_off_rating: f64,
             off_rating: f64,
+
+            #[serde(rename(deserialize = "sp_work_OFF_RATING"))]
             sp_work_off_rating: f64,
+
             e_def_rating: f64,
             def_rating: f64,
+
+            #[serde(rename(deserialize = "sp_work_DEF_RATING"))]
             sp_work_def_rating: f64,
+
             e_net_rating: f64,
             net_rating: f64,
+
+            #[serde(rename(deserialize = "sp_work_NET_RATING"))]
             sp_work_net_rating: f64,
             ast_pct: f64,
             ast_to: f64,
@@ -45,7 +53,10 @@ crate::endpoint! { "leaguedashplayerclutch"
             e_pace: f64,
             pace: f64,
             pace_per40: f64,
+
+            #[serde(rename(deserialize = "sp_work_PACE"))]
             sp_work_pace: f64,
+
             pie: f64,
             poss: u32,
             fgm: u32,
@@ -60,13 +71,22 @@ crate::endpoint! { "leaguedashplayerclutch"
             min_rank: u32,
             e_off_rating_rank: u32,
             off_rating_rank: u32,
+
+            #[serde(rename(deserialize = "sp_work_OFF_RATING_RANK"))]
             sp_work_off_rating_rank: u32,
+
             e_def_rating_rank: u32,
             def_rating_rank: u32,
+
+            #[serde(rename(deserialize = "sp_work_DEF_RATING_RANK"))]
             sp_work_def_rating_rank: u32,
+
             e_net_rating_rank: u32,
             net_rating_rank: u32,
+
+            #[serde(rename(deserialize = "sp_work_NET_RATING_RANK"))]
             sp_work_net_rating_rank: u32,
+
             ast_pct_rank: u32,
             ast_to_rank: u32,
             ast_ratio_rank: u32,
@@ -81,7 +101,10 @@ crate::endpoint! { "leaguedashplayerclutch"
             e_usg_pct_rank: u32,
             e_pace_rank: u32,
             pace_rank: u32,
+
+            #[serde(rename(deserialize = "sp_work_PACE_RANK"))]
             sp_work_pace_rank: u32,
+
             pie_rank: u32,
             fgm_rank: u32,
             fga_rank: u32,

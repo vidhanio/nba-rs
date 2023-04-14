@@ -9,6 +9,7 @@ crate::endpoint! { "leagueleaders"
             player_id: u32,
             rank: u32,
             player: String,
+            team_id: u32,
             team: String,
             gp: u32,
             min: f64,

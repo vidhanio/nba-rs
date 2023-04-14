@@ -1,8 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::fields::{
-    ActiveFlag, LeagueId, PerMode48, Scope, Season, SeasonTypeWithoutPlayIn, StatCategorySimple,
-};
+use crate::fields::{ActiveFlag, LeagueId, PerMode, Scope, Season, SeasonType, StatCategory};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -11,13 +9,13 @@ pub struct SeasonLeadersParameters {
     #[serde(rename = "LeagueID")]
     pub league_id: LeagueId,
 
-    pub per_mode: PerMode48,
+    pub per_mode: PerMode,
 
-    pub stat_category: StatCategorySimple,
+    pub stat_category: StatCategory,
 
     pub season: Season,
 
-    pub season_type: SeasonTypeWithoutPlayIn,
+    pub season_type: SeasonType,
 
     pub scope: Scope,
 

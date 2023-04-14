@@ -1,5 +1,5 @@
 use nba::{
-    fields::PerModeGame,
+    fields::PerMode,
     stats::player::league_leaders::all_time::{AllTimeLeaders, AllTimeLeadersParameters},
     Endpoint,
 };
@@ -9,7 +9,7 @@ async fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
 
     let mut totals = AllTimeLeaders::new(AllTimeLeadersParameters {
-        per_mode: PerModeGame::Totals,
+        per_mode: PerMode::Totals,
         ..Default::default()
     })
     .send()

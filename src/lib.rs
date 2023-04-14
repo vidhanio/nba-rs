@@ -10,8 +10,8 @@
 
 use once_cell::sync::Lazy;
 use reqwest::{
-    header::{HeaderMap, HeaderValue, REFERER},
-    Client,
+    header::{HeaderValue, REFERER},
+    Client, ClientBuilder,
 };
 use stats::endpoint::macros::endpoint;
 use thiserror::Error;
@@ -29,24 +29,21 @@ pub use self::stats::{
     },
 };
 
+/// The [`reqwest::ClientBuilder`] used in [`CLIENT`].
+///
+/// This builder is configured to use the NBA Stats API's referer by default.
+pub fn client_builder() -> ClientBuilder {
+    let headers = std::iter::once((REFERER, "https://www.nba.com/"))
+        .map(|(name, value)| (name, HeaderValue::from_static(value)))
+        .collect();
+
+    Client::builder().default_headers(headers)
+}
+
 /// The default [`reqwest::Client`] used by [`Endpoint`]s.
 ///
 /// This client is configured to use the NBA Stats API's referer by default.
-pub static CLIENT: Lazy<Client> = Lazy::new(|| {
-    let headers = {
-        let mut headers = HeaderMap::new();
-
-        headers.insert(REFERER, HeaderValue::from_static("https://www.nba.com/"));
-
-        headers
-    };
-
-    Client::builder()
-        .default_headers(headers)
-        .cookie_store(true)
-        .build()
-        .expect("static client should build")
-});
+pub static CLIENT: Lazy<Client> = Lazy::new(|| client_builder().build().unwrap());
 
 /// An error which encompasses all possible errors which may occur when using
 /// this crate.

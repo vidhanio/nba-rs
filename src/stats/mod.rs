@@ -6,3 +6,4 @@ pub mod endpoint;
 pub mod response;
 
 pub mod player;
+pub mod team;

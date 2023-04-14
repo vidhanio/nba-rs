@@ -3,7 +3,7 @@ use std::{cmp::Ordering, collections::HashMap, io::Cursor};
 use futures::{prelude::*, stream};
 use image::{imageops::FilterType, DynamicImage, ImageFormat, Rgba};
 use nba::{
-    fields::PerMode48,
+    fields::PerMode,
     stats::player::league_leaders::season::{
         LeagueLeadersRow, SeasonLeaders, SeasonLeadersParameters,
     },
@@ -46,7 +46,7 @@ async fn head_image(
 
 async fn ppg_leaders() -> color_eyre::Result<Vec<LeagueLeadersRow>> {
     Ok(SeasonLeaders::new(SeasonLeadersParameters {
-        per_mode: PerMode48::PerGame,
+        per_mode: PerMode::PerGame,
         ..Default::default()
     })
     .send()
@@ -57,7 +57,7 @@ async fn ppg_leaders() -> color_eyre::Result<Vec<LeagueLeadersRow>> {
 
 async fn total_pts_leaders() -> color_eyre::Result<Vec<LeagueLeadersRow>> {
     Ok(SeasonLeaders::new(SeasonLeadersParameters {
-        per_mode: PerMode48::Totals,
+        per_mode: PerMode::Totals,
         ..Default::default()
     })
     .send()

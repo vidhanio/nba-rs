@@ -1,6 +1,6 @@
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize_repr, Deserialize_repr)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[repr(u32)]
 pub enum Team {
     #[default]
@@ -65,4 +65,76 @@ pub enum Team {
     UtahJazz = 1_610_612_762,
 
     WashingtonWizards = 1_610_612_764,
+}
+
+impl Team {
+    pub const ALL: [Self; 30] = [
+        Self::AtlantaHawks,
+        Self::BostonCeltics,
+        Self::BrooklynNets,
+        Self::CharlotteHornets,
+        Self::ChicagoBulls,
+        Self::ClevelandCavaliers,
+        Self::DallasMavericks,
+        Self::DenverNuggets,
+        Self::DetroitPistons,
+        Self::GoldenStateWarriors,
+        Self::HoustonRockets,
+        Self::IndianaPacers,
+        Self::LaClippers,
+        Self::LosAngelesLakers,
+        Self::MemphisGrizzlies,
+        Self::MiamiHeat,
+        Self::MilwaukeeBucks,
+        Self::MinnesotaTimberwolves,
+        Self::NewOrleansPelicans,
+        Self::NewYorkKnicks,
+        Self::OklahomaCityThunder,
+        Self::OrlandoMagic,
+        Self::Philadelphia76ers,
+        Self::PhoenixSuns,
+        Self::PortlandTrailBlazers,
+        Self::SacramentoKings,
+        Self::SanAntonioSpurs,
+        Self::TorontoRaptors,
+        Self::UtahJazz,
+        Self::WashingtonWizards,
+    ];
+
+    #[must_use]
+    pub const fn abbreviation(self) -> &'static str {
+        match self {
+            Self::AllTeams => "ALL",
+            Self::AtlantaHawks => "ATL",
+            Self::BostonCeltics => "BOS",
+            Self::BrooklynNets => "BKN",
+            Self::CharlotteHornets => "CHA",
+            Self::ChicagoBulls => "CHI",
+            Self::ClevelandCavaliers => "CLE",
+            Self::DallasMavericks => "DAL",
+            Self::DenverNuggets => "DEN",
+            Self::DetroitPistons => "DET",
+            Self::GoldenStateWarriors => "GSW",
+            Self::HoustonRockets => "HOU",
+            Self::IndianaPacers => "IND",
+            Self::LaClippers => "LAC",
+            Self::LosAngelesLakers => "LAL",
+            Self::MemphisGrizzlies => "MEM",
+            Self::MiamiHeat => "MIA",
+            Self::MilwaukeeBucks => "MIL",
+            Self::MinnesotaTimberwolves => "MIN",
+            Self::NewOrleansPelicans => "NOP",
+            Self::NewYorkKnicks => "NYK",
+            Self::OklahomaCityThunder => "OKC",
+            Self::OrlandoMagic => "ORL",
+            Self::Philadelphia76ers => "PHI",
+            Self::PhoenixSuns => "PHX",
+            Self::PortlandTrailBlazers => "POR",
+            Self::SacramentoKings => "SAC",
+            Self::SanAntonioSpurs => "SAS",
+            Self::TorontoRaptors => "TOR",
+            Self::UtahJazz => "UTA",
+            Self::WashingtonWizards => "WAS",
+        }
+    }
 }

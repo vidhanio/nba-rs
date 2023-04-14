@@ -43,7 +43,7 @@ async fn main() -> color_eyre::Result<()> {
             }
 
             if !repr {
-                println!("    #[serde(rename = \"{rename}\")]",);
+                println!("    #[serde(rename(deserialize = \"{rename}\"))]",);
             }
 
             println!(

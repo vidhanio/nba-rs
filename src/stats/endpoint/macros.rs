@@ -21,7 +21,7 @@ macro_rules! endpoint {
         #[allow(missing_copy_implementations)]
         #[derive(Clone, Debug, Default, PartialEq, Eq, ::serde::Serialize, ::serde::Deserialize)]
         #[serde(deny_unknown_fields)]
-        #[serde(rename_all = "PascalCase")]
+        #[serde(rename_all(deserialize = "PascalCase"))]
         pub struct $name {
             params: $params,
         }
@@ -51,7 +51,9 @@ macro_rules! endpoint {
         $(
         #[allow(missing_copy_implementations)]
         #[allow(clippy::derive_partial_eq_without_eq)]
-        #[derive(Clone, Debug, Default, PartialEq, ::serde::Serialize)]
+        #[derive(Clone, Debug, Default, PartialEq, ::serde::Serialize, ::serde::Deserialize)]
+        #[serde(deny_unknown_fields)]
+        #[serde(rename_all(deserialize = "SCREAMING_SNAKE_CASE"))]
         pub struct $rs {
             $(
             $(#[$rfattr])*
@@ -63,15 +65,13 @@ macro_rules! endpoint {
         #[allow(missing_copy_implementations)]
         #[allow(clippy::derive_partial_eq_without_eq)]
         #[derive(Clone, Debug, Default, PartialEq, ::serde::Serialize)]
-        #[serde(deny_unknown_fields)]
-        #[serde(rename_all = "camelCase")]
         pub struct ResultSets {
             $(
             pub $rn: Vec<$rs>,
             )*
         }
 
-        impl ::std::convert::TryFrom<Vec<$crate::BasicResultSet>> for ResultSets {
+        impl TryFrom<Vec<$crate::BasicResultSet>> for ResultSets {
             type Error = String;
 
             #[allow(unused_mut)]
@@ -81,60 +81,36 @@ macro_rules! endpoint {
                     .into_iter()
                     .try_fold(Self::default(), |mut result_sets, mut rs| {
                         // map headers to indices
-                        let mut index_hm = rs
+                        let mut header_map = rs
                             .headers
                             .iter()
                             .enumerate()
-                            .map(|(i, h)| (h.to_lowercase(), i))
                             .collect::<::std::collections::HashMap<_, _>>();
 
                         // match result set
                         match rs.name.as_str() {
                             $(
                             $rl => {
-                                // add missing headers which are null
-                                $(
-                                index_hm.entry(stringify!($rf).to_owned()).or_insert_with_key(|rf| {
-                                    rs.headers.push(rf.to_owned());
-                                    rs.headers.len() - 1
-                                });
-                                )*
-
-                                rs.row_set.iter_mut().for_each(|row| {
-                                    row.resize(rs.headers.len(), ::serde_json::Value::Null)
-                                });
-
                                 result_sets.$rn = rs
                                     .row_set
                                     .into_iter()
                                     .map(|row| {
-                                        Ok($rs {
-                                            $(
-                                            $rf: row
-                                                .get(
-                                                    *index_hm
-                                                        .get(stringify!($rf).to_lowercase().as_str())
-                                                        .ok_or_else(|| {
-                                                            format!(
-                                                                "header should be present: {}",
-                                                                stringify!($rf)
-                                                            )
-                                                        })?,
-                                                )
-                                                .cloned()
-                                                .map(::serde_json::from_value)
-                                                .ok_or_else(|| {
-                                                    format!("field should be present: {}", stringify!($rf))
-                                                })?
-                                                .map_err(|e| {
-                                                    format!(
-                                                        "failed to parse field `{}`: {}",
-                                                        stringify!($rf),
-                                                        e
-                                                    )
-                                                })?,
-                                            )*
-                                        })
+                                        let map = row
+                                            .into_iter()
+                                            .enumerate()
+                                            .try_fold(::serde_json::Map::new(), |mut map, (i, value)| {
+                                                let header = header_map
+                                                    .get(&i)
+                                                    .ok_or_else(|| format!("index out of bounds for header: `{i}`"))?;
+
+                                                map.insert((*header).to_owned(), value);
+
+                                                Ok::<_, String>(map)
+                                            })?;
+
+                                        ::serde_json::from_value(::serde_json::Value::Object(map))
+                                            .map_err(|e| format!("failed to deserialize row `{}`: {}", rs.name, e))
+
                                     })
                                     .collect::<Result<_, String>>()?;
 
@@ -148,7 +124,7 @@ macro_rules! endpoint {
         }
 
         impl<'de> ::serde::Deserialize<'de> for ResultSets {
-            fn deserialize<D>(deserializer: D) -> ::std::result::Result<Self, D::Error>
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
             where
                 D: ::serde::Deserializer<'de>,
             {
@@ -170,7 +146,11 @@ macro_rules! endpoint {
 
             #[::tokio::test]
             async fn works() {
-                $name::new(::std::default::Default::default())
+                let endpoint = $name::new(::std::default::Default::default());
+
+                dbg!(endpoint.to_request());
+
+                endpoint
                     .send()
                     .await
                     .unwrap();

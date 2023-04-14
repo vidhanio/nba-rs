@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    fields::{LeagueId, PerModeGame, PlayType, PlayerOrTeam, Season, SeasonType, TypeGrouping},
+    fields::{LeagueId, PerMode, PlayType, PlayerOrTeam, Season, SeasonType, TypeGrouping},
     serde::serde_player_or_team_char,
 };
 
@@ -16,7 +16,7 @@ pub struct PlayersPlaytypeParameters {
 
     pub season_type: SeasonType,
 
-    pub per_mode: PerModeGame,
+    pub per_mode: PerMode,
 
     #[doc(hidden)]
     #[serde(with = "serde_player_or_team_char")]
