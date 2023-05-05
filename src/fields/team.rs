@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
@@ -136,5 +138,68 @@ impl Team {
             Self::UtahJazz => "UTA",
             Self::WashingtonWizards => "WAS",
         }
+    }
+}
+
+impl FromStr for Team {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_uppercase().as_str() {
+            "ATL" => Ok(Self::AtlantaHawks),
+            "BOS" => Ok(Self::BostonCeltics),
+            "BKN" => Ok(Self::BrooklynNets),
+            "CHA" => Ok(Self::CharlotteHornets),
+            "CHI" => Ok(Self::ChicagoBulls),
+            "CLE" => Ok(Self::ClevelandCavaliers),
+            "DAL" => Ok(Self::DallasMavericks),
+            "DEN" => Ok(Self::DenverNuggets),
+            "DET" => Ok(Self::DetroitPistons),
+            "GSW" => Ok(Self::GoldenStateWarriors),
+            "HOU" => Ok(Self::HoustonRockets),
+            "IND" => Ok(Self::IndianaPacers),
+            "LAC" => Ok(Self::LaClippers),
+            "LAL" => Ok(Self::LosAngelesLakers),
+            "MEM" => Ok(Self::MemphisGrizzlies),
+            "MIA" => Ok(Self::MiamiHeat),
+            "MIL" => Ok(Self::MilwaukeeBucks),
+            "MIN" => Ok(Self::MinnesotaTimberwolves),
+            "NOP" => Ok(Self::NewOrleansPelicans),
+            "NYK" => Ok(Self::NewYorkKnicks),
+            "OKC" => Ok(Self::OklahomaCityThunder),
+            "ORL" => Ok(Self::OrlandoMagic),
+            "PHI" => Ok(Self::Philadelphia76ers),
+            "PHX" => Ok(Self::PhoenixSuns),
+            "POR" => Ok(Self::PortlandTrailBlazers),
+            "SAC" => Ok(Self::SacramentoKings),
+            "SAS" => Ok(Self::SanAntonioSpurs),
+            "TOR" => Ok(Self::TorontoRaptors),
+            "UTA" => Ok(Self::UtahJazz),
+            "WAS" => Ok(Self::WashingtonWizards),
+            _ => Err(()),
+        }
+    }
+}
+
+mod as_tricode {
+    use serde::{de, Deserialize, Deserializer, Serializer};
+
+    use super::Team;
+
+    #[allow(clippy::trivially_copy_pass_by_ref)]
+    pub fn serialize<S>(team: &Team, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(team.abbreviation())
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<Team, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        s.parse()
+            .map_err(|_| de::Error::invalid_value(de::Unexpected::Str(&s), &"a tricode"))
     }
 }

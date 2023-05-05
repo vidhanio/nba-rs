@@ -2,6 +2,8 @@
 
 #![allow(missing_docs)]
 
+pub mod playbyplay;
+
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 

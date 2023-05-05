@@ -8,18 +8,16 @@
 #![allow(clippy::module_name_repetitions)]
 #![warn(missing_docs)]
 
+use std::time::Duration;
+
 use once_cell::sync::Lazy;
 use reqwest::{
     header::{HeaderValue, REFERER},
     Client, ClientBuilder,
 };
-use stats::endpoint::macros::endpoint;
 use thiserror::Error;
 
-pub mod fields;
-pub mod live;
-mod serde;
-pub mod stats;
+use stats::endpoint::macros::endpoint;
 
 pub use self::stats::{
     endpoint::Endpoint,
@@ -29,15 +27,23 @@ pub use self::stats::{
     },
 };
 
+pub mod fields;
+pub mod live;
+mod serde;
+pub mod stats;
+
 /// The [`reqwest::ClientBuilder`] used in [`CLIENT`].
 ///
-/// This builder is configured to use the NBA Stats API's referer by default.
+/// This builder is configured to use the NBA Stats API's referer by default, and
+/// has a timeout of 10 seconds.
 pub fn client_builder() -> ClientBuilder {
     let headers = std::iter::once((REFERER, "https://www.nba.com/"))
         .map(|(name, value)| (name, HeaderValue::from_static(value)))
         .collect();
 
-    Client::builder().default_headers(headers)
+    Client::builder()
+        .timeout(Duration::from_secs(10))
+        .default_headers(headers)
 }
 
 /// The default [`reqwest::Client`] used by [`Endpoint`]s.

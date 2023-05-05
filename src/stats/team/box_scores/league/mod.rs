@@ -19,7 +19,7 @@ crate::endpoint! { "leaguegamelog"
             game_id: String,
             game_date: String,
             matchup: String,
-            wl: String,
+            wl: Option<String>,
             min: u32,
             fgm: Option<u32>,
             fga: Option<u32>,
