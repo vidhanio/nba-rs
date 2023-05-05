@@ -3,6 +3,18 @@ use heck::{AsPascalCase, ToPascalCase};
 use tokio::io::{stdin, AsyncBufReadExt, BufReader};
 use tokio_stream::wrappers::LinesStream;
 
+/*
+document
+    .querySelector(".nba-stats-primary-split-block")
+    .querySelectorAll(".DropDown_label__lttfI")
+    .forEach(label => console.log(
+        label.querySelector("p").innerText,
+        [...label.querySelectorAll("option")].map(option =>
+            `${option.selected ? "DEFAULT" : ""}|${option.innerText}|${option.value}`
+        ).join("\n")
+    ))
+*/
+
 #[tokio::main]
 async fn main() -> color_eyre::Result<()> {
     let mut lines = LinesStream::new(BufReader::new(stdin()).lines());
