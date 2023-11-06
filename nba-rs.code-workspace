@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": "."
+    },
+    {
+      "name": "live",
+      "path": "crates/nba-live"
+    },
+    {
+      "name": "macros",
+      "path": "crates/nba-macros"
+    },
+    {
+      "name": "stats",
+      "path": "crates/nba-stats"
+    }
+  ]
+}
