@@ -1,14 +1,17 @@
+pub mod alltimeleadersgrids;
+pub mod assistleaders;
+pub mod leagueleaders;
+
 use std::{borrow::Cow, collections::HashMap};
 
 use async_trait::async_trait;
+pub use nba_macros::Endpoint;
 use reqwest::{Client, Request, Url};
 use serde::{de::DeserializeOwned, Serialize};
 
 use crate::{
-    serde::vec_or_single::VecOrSingle, BasicResponse, BasicResultSet, Response, Result, CLIENT,
+    serde::one_or_many::OneOrMany, BasicResponse, BasicResultSet, Response, Result, CLIENT,
 };
-
-pub(crate) mod macros;
 
 /// A trait which represents an endpoint in the NBA Stats API.
 #[async_trait]
@@ -18,8 +21,6 @@ pub trait Endpoint: Sync {
 
     /// The type of the result sets returned by the endpoint.
     type ResultSets: DeserializeOwned;
-
-    fn new(params: Self::Parameters) -> Self;
 
     /// The endpoint's name.
     fn endpoint(&self) -> Cow<'static, str>;
@@ -70,7 +71,7 @@ pub trait Endpoint: Sync {
         } = self
             .send_raw_with_client(client)
             .await?
-            .json::<Response<Self::Parameters, VecOrSingle<BasicResultSet>>>()
+            .json::<Response<Self::Parameters, OneOrMany<BasicResultSet>>>()
             .await?;
 
         let result_sets = result_sets
@@ -160,10 +161,6 @@ impl BasicEndpoint {
 impl Endpoint for BasicEndpoint {
     type Parameters = serde_json::Map<String, serde_json::Value>;
     type ResultSets = HashMap<String, Vec<serde_json::Map<String, serde_json::Value>>>;
-
-    fn new(_: Self::Parameters) -> Self {
-        panic!("use the inherent `BasicEndpoint::new` method instead")
-    }
 
     fn endpoint(&self) -> Cow<'static, str> {
         self.endpoint.clone().into()

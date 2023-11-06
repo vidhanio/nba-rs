@@ -9,7 +9,7 @@ macro_rules! reexport {
     } => {
         $(
             mod $name;
-            pub use $name::*;
+            pub use self::$name::*;
         )*
     };
 }
@@ -35,9 +35,9 @@ reexport! {
     month;
     outcome;
     per_mode;
+    play_type;
     player_or_team;
     playoff_round;
-    play_type;
     point_diff;
     position;
     quarter;

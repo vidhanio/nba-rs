@@ -68,14 +68,6 @@ fn try_derive_endpoint(input: DeriveInput) -> darling::Result<TokenStream2> {
         }
     });
 
-    let new = if let Some(params_field) = params_field.as_ref() {
-        quote::quote! {
-            Self { #params_field: params }
-        }
-    } else {
-        quote::quote! { params }
-    };
-
     let parameters = if let Some(params_field) = params_field.as_ref() {
         quote::quote! { self.#params_field }
     } else {
@@ -86,10 +78,6 @@ fn try_derive_endpoint(input: DeriveInput) -> darling::Result<TokenStream2> {
         impl #imp crate::Endpoint for #ident #ty #wher {
             type Parameters = #params_ty;
             type ResultSets = #result_set_name #ty;
-
-            fn new(params: Self::Parameters) -> Self {
-                #new
-            }
 
             fn endpoint(&self) -> ::std::borrow::Cow<'static, str> {
                 #path.into()

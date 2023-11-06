@@ -6,7 +6,7 @@
 #![warn(missing_debug_implementations)]
 #![warn(missing_copy_implementations)]
 #![allow(clippy::module_name_repetitions)]
-#![warn(missing_docs)]
+// #![warn(missing_docs)]
 
 use std::time::Duration;
 
@@ -15,20 +15,20 @@ use reqwest::{
     header::{HeaderValue, REFERER},
     Client, ClientBuilder,
 };
-use stats::endpoint::macros::endpoint;
 use thiserror::Error;
 
-pub use self::stats::{
-    endpoint::Endpoint,
+pub use self::{
+    endpoints::{BasicEndpoint, Endpoint},
     response::{
         basic::{BasicResponse, BasicResultSet},
         Response,
     },
 };
 
+pub mod endpoints;
 pub mod fields;
+pub mod response;
 mod serde;
-pub mod stats;
 
 /// The [`reqwest::ClientBuilder`] used in [`CLIENT`].
 ///
@@ -65,11 +65,3 @@ pub enum Error {
 /// A convenience [`std::result::Result`] which uses a [`enum@crate::Error`] as
 /// its error type.
 pub type Result<T, E = Error> = std::result::Result<T, E>;
-
-macro_rules! regex {
-    ($($re:expr),+ $(,)?) => {($({
-        static RE: ::once_cell::sync::OnceCell<::regex::Regex> = ::once_cell::sync::OnceCell::new();
-        RE.get_or_init(|| ::regex::Regex::new($re).unwrap())
-    }),+)};
-}
-use regex;
