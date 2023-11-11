@@ -43,7 +43,7 @@ pub struct AssistTracker {
     pub weight: Option<()>,
 }
 
-#[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
 pub struct AssistTrackerResultSet {
     pub assists: i32,

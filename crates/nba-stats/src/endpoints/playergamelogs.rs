@@ -115,6 +115,6 @@ mod tests {
 
     #[tokio::test]
     async fn works() {
-        println!("{:#?}", assert_ok!(PlayerGameLogs::default().send().await))
+        println!("{:#?}", assert_ok!(PlayerGameLogs::default().send().await));
     }
 }

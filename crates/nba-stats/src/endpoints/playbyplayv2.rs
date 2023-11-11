@@ -64,6 +64,8 @@ pub struct AvailableVideoResultSet {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::unreadable_literal, clippy::zero_prefixed_literal)]
+
     use claims::assert_ok;
 
     use super::*;
