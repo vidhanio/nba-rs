@@ -4,7 +4,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[repr(u32)]
-pub enum Team {
+pub enum TeamName {
     #[default]
     AllTeams = 0,
 
@@ -69,7 +69,7 @@ pub enum Team {
     WashingtonWizards = 1_610_612_764,
 }
 
-impl Team {
+impl TeamName {
     pub const ALL: [Self; 30] = [
         Self::AtlantaHawks,
         Self::BostonCeltics,
@@ -141,7 +141,7 @@ impl Team {
     }
 }
 
-impl FromStr for Team {
+impl FromStr for TeamName {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -184,17 +184,17 @@ impl FromStr for Team {
 mod as_tricode {
     use serde::{de, Deserialize, Deserializer, Serializer};
 
-    use super::Team;
+    use super::TeamName;
 
     #[allow(clippy::trivially_copy_pass_by_ref)]
-    pub fn serialize<S>(team: &Team, serializer: S) -> Result<S::Ok, S::Error>
+    pub fn serialize<S>(team: &TeamName, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
         serializer.serialize_str(team.abbreviation())
     }
 
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<Team, D::Error>
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<TeamName, D::Error>
     where
         D: Deserializer<'de>,
     {

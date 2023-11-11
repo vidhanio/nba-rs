@@ -17,6 +17,10 @@ resolver = "2"
     nba-macros = { path = "crates/nba-macros" }
     nba-stats = { path = "crates/nba-stats" }
 
+    proc-macro2 = "1"
+    quote = "1"
+    syn = "2"
+
     async-trait = "0.1"
     claims = "0.7"
     reqwest = { version = "0.11", features = ["cookies", "gzip", "json"] }

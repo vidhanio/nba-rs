@@ -15,6 +15,6 @@ proc-macro = true
 
 [dependencies]
 darling = "0.20"
-proc-macro2 = "1"
-quote = "1"
-syn = "2"
+proc-macro2.workspace = true
+quote.workspace = true
+syn.workspace = true

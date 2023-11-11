@@ -1,11 +1,15 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub enum PlayerOrTeam {
+pub enum Player {
     #[default]
-    #[serde(rename = "P")]
+    #[serde(rename = "Player")]
     Player,
+}
 
-    #[serde(rename = "T")]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum Team {
+    #[default]
+    #[serde(rename = "Team")]
     Team,
 }

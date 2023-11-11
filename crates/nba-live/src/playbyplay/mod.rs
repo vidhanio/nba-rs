@@ -129,7 +129,7 @@ pub enum ActionType {
     ThreePointShot(ThreePointShot),
     // Block(Block),
     // Foul(Foul),
-    // FreeThrow(FreeThrow),
+    // FreeThresult_set(FreeThrow),
     // Game(Game),
     // JumpBall(JumpBall),
     // Period(Period),

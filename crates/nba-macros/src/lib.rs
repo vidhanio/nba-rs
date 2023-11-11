@@ -1,107 +1,122 @@
-use darling::{
-    ast::Data,
-    util::{Flag, Ignored},
-    Error, FromDeriveInput, FromField, FromMeta,
-};
+use darling::{ast::Data, util::Ignored, Error, FromDeriveInput, FromMeta};
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::{format_ident, ToTokens};
-use syn::{DeriveInput, Generics, Ident, Type};
+use syn::{DeriveInput, Field, Generics, Ident, Type};
 
 #[derive(FromDeriveInput)]
 #[darling(attributes(endpoint), supports(struct_named))]
 struct EndpointOpts {
     ident: Ident,
     generics: Generics,
-    data: Data<Ignored, EndpointField>,
+    data: Data<Ignored, Field>,
 
     path: String,
 
     #[darling(multiple)]
-    row: Vec<EndpointRow>,
-}
-
-#[derive(FromField)]
-#[darling(attributes(endpoint))]
-struct EndpointField {
-    ident: Option<Ident>,
-    ty: Type,
-
-    params: Flag,
+    result_set: Vec<ResultSet>,
 }
 
 #[derive(FromMeta)]
-struct EndpointRow {
+struct ResultSet {
     field: Ident,
     ty: Type,
-    row: String,
+    name: String,
 }
 
-fn try_derive_endpoint(input: DeriveInput) -> darling::Result<TokenStream2> {
-    let EndpointOpts {
-        ident,
-        generics,
-        data,
-        path,
-        row,
-    } = EndpointOpts::from_derive_input(&input)?;
+impl ToTokens for EndpointOpts {
+    fn to_tokens(&self, tokens: &mut TokenStream2) {
+        let EndpointOpts {
+            ident,
+            generics,
+            data,
+            path,
+            result_set: row,
+        } = self;
 
-    let (imp, ty, wher) = generics.split_for_impl();
+        let (impl_generics, type_generics, where_generics) = generics.split_for_impl();
 
-    let fields = data.take_struct().expect("should only be struct").fields;
+        let fields = data
+            .as_ref()
+            .take_struct()
+            .expect("should only be struct")
+            .fields;
 
-    let (params_field, params_ty) = fields
-        .into_iter()
-        .find_map(|f| {
-            f.params
-                .is_present()
-                .then(|| (Some(f.ident), f.ty.into_token_stream()))
-        })
-        .unwrap_or((None, quote::quote! { Self }));
+        let result_sets_name = format_ident!("{ident}ResultSets");
 
-    let result_set_name = format_ident!("{ident}ResultSets");
+        let rows = row.iter().map(
+            |ResultSet {
+                 field,
+                 ty,
+                 name: result_set,
+             }| {
+                quote::quote! {
+                    #[serde(rename = #result_set)]
+                    pub #field: Vec<#ty>,
+                }
+            },
+        );
 
-    let rows = row.into_iter().map(|EndpointRow { field, ty, row }| {
+        let builder_methods = fields.iter().map(|Field { ident, ty, .. }| {
+            let ident = ident.as_ref().expect("should only be named fields");
+            let method_name = format_ident!("with_{ident}");
+
+            quote::quote! {
+                pub fn #method_name(self, #ident: #ty) -> Self {
+                    Self {
+                        #ident,
+                        ..self
+                    }
+                }
+            }
+        });
+
+        let builder_impl = quote::quote! {
+            impl #impl_generics #ident #type_generics #where_generics {
+                #(#builder_methods)*
+            }
+        };
+
+        let endpoint_impl = quote::quote! {
+            impl #impl_generics crate::Endpoint for #ident #type_generics #where_generics {
+                type Parameters = Self;
+                type ResultSets = #result_sets_name #type_generics;
+
+                fn path(&self) -> ::std::borrow::Cow<'static, str> {
+                    #path.into()
+                }
+
+                fn parameters(&self) -> Self::Parameters {
+                    self.clone()
+                }
+            }
+        };
+
+        let result_sets = quote::quote! {
+            #[allow(missing_copy_implementations)]
+            #[allow(clippy::derive_partial_eq_without_eq)]
+            #[derive(Clone, Debug, Default, PartialEq, ::serde::Serialize, ::serde::Deserialize)]
+            pub struct #result_sets_name #generics #where_generics {
+                #(#rows)*
+            }
+        };
+
         quote::quote! {
-            #[serde(rename = #row)]
-            pub #field: Vec<#ty>,
+            #builder_impl
+
+            #endpoint_impl
+
+            #result_sets
         }
-    });
-
-    let parameters = if let Some(params_field) = params_field.as_ref() {
-        quote::quote! { self.#params_field }
-    } else {
-        quote::quote! { self }
-    };
-
-    Ok(quote::quote! {
-        impl #imp crate::Endpoint for #ident #ty #wher {
-            type Parameters = #params_ty;
-            type ResultSets = #result_set_name #ty;
-
-            fn endpoint(&self) -> ::std::borrow::Cow<'static, str> {
-                #path.into()
-            }
-
-            fn parameters(&self) -> Self::Parameters {
-                #parameters.clone()
-            }
-        }
-
-        #[allow(missing_copy_implementations)]
-        #[allow(clippy::derive_partial_eq_without_eq)]
-        #[derive(Clone, Debug, Default, PartialEq, ::serde::Serialize, ::serde::Deserialize)]
-        pub struct #result_set_name #generics #wher {
-            #(#rows)*
-        }
-    })
+        .to_tokens(tokens)
+    }
 }
 
 #[proc_macro_derive(Endpoint, attributes(endpoint))]
 pub fn derive_endpoint(input: TokenStream) -> TokenStream {
-    let input = syn::parse_macro_input!(input as syn::DeriveInput);
+    let input = syn::parse_macro_input!(input as DeriveInput);
 
-    try_derive_endpoint(input)
-        .unwrap_or_else(Error::write_errors)
+    EndpointOpts::from_derive_input(&input)
+        .map_or_else(Error::write_errors, ToTokens::into_token_stream)
         .into()
 }

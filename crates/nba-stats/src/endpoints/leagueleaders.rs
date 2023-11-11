@@ -1,16 +1,18 @@
 use std::fmt::Debug;
 
-use sealed::sealed;
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
 use crate::{
-    fields::{ActiveFlag, AllTime, LeagueId, PerMode, Scope, Season, SeasonType, StatCategory},
+    fields::{
+        trait_param, ActiveFlag, AllTime, LeagueId, PerMode, Scope, Season, SeasonType,
+        StatCategory,
+    },
     Endpoint,
 };
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, Endpoint)]
 #[endpoint(path = "leagueleaders")]
-#[endpoint(row(field = league_leaders, ty = "S::Row", row = "LeagueLeaders"))]
+#[endpoint(result_set(field = league_leaders, ty = "S::ResultSet", name = "LeagueLeaders"))]
 #[serde(deny_unknown_fields, rename_all = "PascalCase", bound = "")]
 pub struct LeagueLeaders<S: LeagueLeadersSeason> {
     #[serde(rename = "LeagueID")]
@@ -29,21 +31,16 @@ pub struct LeagueLeaders<S: LeagueLeadersSeason> {
     pub active_flag: Option<ActiveFlag>,
 }
 
-#[sealed]
-pub trait LeagueLeadersSeason:
-    Serialize + DeserializeOwned + Debug + Clone + PartialEq + Eq + Sync
-{
-    type Row: Serialize + DeserializeOwned + Debug + Clone + PartialEq + Sync;
-}
-
-#[sealed]
-impl LeagueLeadersSeason for Season {
-    type Row = LeagueLeadersSeasonRow;
+trait_param! {
+    LeagueLeadersSeason {
+        Season { LeagueLeadersSeasonResultSet };
+        AllTime { LeagueLeadersAllTimeResultSet };
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all(deserialize = "SCREAMING_SNAKE_CASE"))]
-pub struct LeagueLeadersSeasonRow {
+pub struct LeagueLeadersSeasonResultSet {
     pub player_id: u32,
     pub rank: u32,
     pub player: String,
@@ -74,14 +71,9 @@ pub struct LeagueLeadersSeasonRow {
     pub stl_tov: Option<f64>,
 }
 
-#[sealed]
-impl LeagueLeadersSeason for AllTime {
-    type Row = LeagueLeadersAllTimeRow;
-}
-
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all(deserialize = "SCREAMING_SNAKE_CASE"))]
-pub struct LeagueLeadersAllTimeRow {
+pub struct LeagueLeadersAllTimeResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub gp: i32,

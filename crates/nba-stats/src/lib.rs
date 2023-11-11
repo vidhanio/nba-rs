@@ -28,7 +28,7 @@ pub use self::{
 pub mod endpoints;
 pub mod fields;
 pub mod response;
-mod serde;
+mod serde_utils;
 
 /// The [`reqwest::ClientBuilder`] used in [`CLIENT`].
 ///

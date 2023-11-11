@@ -1,6 +1,9 @@
 pub mod alltimeleadersgrids;
 pub mod assistleaders;
+pub mod assisttracker;
 pub mod leagueleaders;
+pub mod playbyplayv2;
+pub mod playergamelogs;
 
 use std::{borrow::Cow, collections::HashMap};
 
@@ -10,8 +13,10 @@ use reqwest::{Client, Request, Url};
 use serde::{de::DeserializeOwned, Serialize};
 
 use crate::{
-    serde::one_or_many::OneOrMany, BasicResponse, BasicResultSet, Response, Result, CLIENT,
+    serde_utils::one_or_many::OneOrMany, BasicResponse, BasicResultSet, Response, Result, CLIENT,
 };
+
+const BASE_URL: &str = "https://stats.nba.com/stats/";
 
 /// A trait which represents an endpoint in the NBA Stats API.
 #[async_trait]
@@ -22,17 +27,18 @@ pub trait Endpoint: Sync {
     /// The type of the result sets returned by the endpoint.
     type ResultSets: DeserializeOwned;
 
-    /// The endpoint's name.
-    fn endpoint(&self) -> Cow<'static, str>;
+    /// The endpoint's path.
+    fn path(&self) -> Cow<'static, str>;
 
     /// The parameters used to generate the response.
     fn parameters(&self) -> Self::Parameters;
 
     /// The endpoint's url.
     fn url(&self) -> Url {
-        format!("https://stats.nba.com/stats/{}", self.endpoint())
-            .parse()
-            .expect("endpoint url should be well-formed")
+        Url::parse(BASE_URL)
+            .expect("base url should be well-formed")
+            .join(&self.path())
+            .expect("endpoint should join")
     }
 
     /// Creates a [`reqwest::Request`] from `self` using the provided
@@ -128,7 +134,8 @@ pub trait Endpoint: Sync {
     }
 }
 
-/// A basic implementation of [`Endpoint`] which can be used for untyped access.
+/// A basic implementation of [`Endpoint`] which can be used for loosely typed
+/// access.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct BasicEndpoint {
     endpoint: String,
@@ -136,7 +143,7 @@ pub struct BasicEndpoint {
 }
 
 impl BasicEndpoint {
-    /// Creates a new [`BasicEndpoint`] with the provided endpoint and
+    /// Creates a new [`BasicEndpoint`] with the provided path and
     /// parameters.
     #[must_use]
     pub const fn new(
@@ -162,7 +169,7 @@ impl Endpoint for BasicEndpoint {
     type Parameters = serde_json::Map<String, serde_json::Value>;
     type ResultSets = HashMap<String, Vec<serde_json::Map<String, serde_json::Value>>>;
 
-    fn endpoint(&self) -> Cow<'static, str> {
+    fn path(&self) -> Cow<'static, str> {
         self.endpoint.clone().into()
     }
 

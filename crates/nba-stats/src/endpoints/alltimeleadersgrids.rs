@@ -2,44 +2,44 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     fields::{LeagueId, PerMode, SeasonType},
-    Endpoint,
+    serde_utils, Endpoint,
 };
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, Endpoint)]
 #[endpoint(path = "alltimeleadersgrids")]
+#[endpoint(result_set(field = gp_leaders, ty = "GpLeadersResultSet", name = "GPLeaders"))]
+#[endpoint(result_set(field = pts_leaders, ty = "PtsLeadersResultSet", name = "PTSLeaders"))]
+#[endpoint(result_set(field = ast_leaders, ty = "AstLeadersResultSet", name = "ASTLeaders"))]
+#[endpoint(result_set(field = stl_leaders, ty = "StlLeadersResultSet", name = "STLLeaders"))]
+#[endpoint(result_set(field = oreb_leaders, ty = "OrebLeadersResultSet", name = "OREBLeaders"))]
+#[endpoint(result_set(field = dreb_leaders, ty = "DrebLeadersResultSet", name = "DREBLeaders"))]
+#[endpoint(result_set(field = reb_leaders, ty = "RebLeadersResultSet", name = "REBLeaders"))]
+#[endpoint(result_set(field = blk_leaders, ty = "BlkLeadersResultSet", name = "BLKLeaders"))]
+#[endpoint(result_set(field = fgm_leaders, ty = "FgmLeadersResultSet", name = "FGMLeaders"))]
+#[endpoint(result_set(field = fga_leaders, ty = "FgaLeadersResultSet", name = "FGALeaders"))]
+#[endpoint(result_set(field = fg_pct_leaders, ty = "FgPctLeadersResultSet", name = "FG_PCTLeaders"))]
+#[endpoint(result_set(field = tov_leaders, ty = "TovLeadersResultSet", name = "TOVLeaders"))]
+#[endpoint(result_set(field = fg3m_leaders, ty = "Fg3mLeadersResultSet", name = "FG3MLeaders"))]
+#[endpoint(result_set(field = fg3a_leaders, ty = "Fg3aLeadersResultSet", name = "FG3ALeaders"))]
+#[endpoint(result_set(field = fg3_pct_leaders, ty = "Fg3PctLeadersResultSet", name = "FG3_PCTLeaders"))]
+#[endpoint(result_set(field = pf_leaders, ty = "PfLeadersResultSet", name = "PFLeaders"))]
+#[endpoint(result_set(field = ftm_leaders, ty = "FtmLeadersResultSet", name = "FTMLeaders"))]
+#[endpoint(result_set(field = fta_leaders, ty = "FtaLeadersResultSet", name = "FTALeaders"))]
+#[endpoint(result_set(field = ft_pct_leaders, ty = "FtPctLeadersResultSet", name = "FT_PCTLeaders"))]
 #[serde(deny_unknown_fields, rename_all = "PascalCase")]
-#[endpoint(row(field = gp_leaders, ty = "GpLeadersRow", row = "GPLeaders"))]
-#[endpoint(row(field = pts_leaders, ty = "PtsLeadersRow", row = "PTSLeaders"))]
-#[endpoint(row(field = ast_leaders, ty = "AstLeadersRow", row = "ASTLeaders"))]
-#[endpoint(row(field = stl_leaders, ty = "StlLeadersRow", row = "STLLeaders"))]
-#[endpoint(row(field = oreb_leaders, ty = "OrebLeadersRow", row = "OREBLeaders"))]
-#[endpoint(row(field = dreb_leaders, ty = "DrebLeadersRow", row = "DREBLeaders"))]
-#[endpoint(row(field = reb_leaders, ty = "RebLeadersRow", row = "REBLeaders"))]
-#[endpoint(row(field = blk_leaders, ty = "BlkLeadersRow", row = "BLKLeaders"))]
-#[endpoint(row(field = fgm_leaders, ty = "FgmLeadersRow", row = "FGMLeaders"))]
-#[endpoint(row(field = fga_leaders, ty = "FgaLeadersRow", row = "FGALeaders"))]
-#[endpoint(row(field = fg_pct_leaders, ty = "FgPctLeadersRow", row = "FG_PCTLeaders"))]
-#[endpoint(row(field = tov_leaders, ty = "TovLeadersRow", row = "TOVLeaders"))]
-#[endpoint(row(field = fg3m_leaders, ty = "Fg3mLeadersRow", row = "FG3MLeaders"))]
-#[endpoint(row(field = fg3a_leaders, ty = "Fg3aLeadersRow", row = "FG3ALeaders"))]
-#[endpoint(row(field = fg3_pct_leaders, ty = "Fg3PctLeadersRow", row = "FG3_PCTLeaders"))]
-#[endpoint(row(field = pf_leaders, ty = "PfLeadersRow", row = "PFLeaders"))]
-#[endpoint(row(field = ftm_leaders, ty = "FtmLeadersRow", row = "FTMLeaders"))]
-#[endpoint(row(field = fta_leaders, ty = "FtaLeadersRow", row = "FTALeaders"))]
-#[endpoint(row(field = ft_pct_leaders, ty = "FtPctLeadersRow", row = "FT_PCTLeaders"))]
 pub struct AllTimeLeadersGrids {
     #[serde(rename = "LeagueID")]
     league_id: LeagueId,
     per_mode: PerMode,
     season_type: SeasonType,
 
-    #[serde(with = "crate::serde::string_u32")]
+    #[serde(with = "serde_utils::u32_as_str")]
     top_x: u32,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct GpLeadersRow {
+pub struct GpLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub gp: i32,
@@ -49,7 +49,7 @@ pub struct GpLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct PtsLeadersRow {
+pub struct PtsLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub pts: f64,
@@ -59,7 +59,7 @@ pub struct PtsLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct AstLeadersRow {
+pub struct AstLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub ast: f64,
@@ -69,7 +69,7 @@ pub struct AstLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct StlLeadersRow {
+pub struct StlLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub stl: f64,
@@ -79,7 +79,7 @@ pub struct StlLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct OrebLeadersRow {
+pub struct OrebLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub oreb: f64,
@@ -89,7 +89,7 @@ pub struct OrebLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct DrebLeadersRow {
+pub struct DrebLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub dreb: f64,
@@ -99,7 +99,7 @@ pub struct DrebLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct RebLeadersRow {
+pub struct RebLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub reb: f64,
@@ -109,7 +109,7 @@ pub struct RebLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct BlkLeadersRow {
+pub struct BlkLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub blk: f64,
@@ -119,7 +119,7 @@ pub struct BlkLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct FgmLeadersRow {
+pub struct FgmLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub fgm: f64,
@@ -129,7 +129,7 @@ pub struct FgmLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct FgaLeadersRow {
+pub struct FgaLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub fga: f64,
@@ -139,7 +139,7 @@ pub struct FgaLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct FgPctLeadersRow {
+pub struct FgPctLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub fg_pct: f64,
@@ -149,7 +149,7 @@ pub struct FgPctLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct TovLeadersRow {
+pub struct TovLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub tov: f64,
@@ -159,7 +159,7 @@ pub struct TovLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct Fg3mLeadersRow {
+pub struct Fg3mLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub fg3m: f64,
@@ -169,7 +169,7 @@ pub struct Fg3mLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct Fg3aLeadersRow {
+pub struct Fg3aLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub fg3a: f64,
@@ -179,7 +179,7 @@ pub struct Fg3aLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct Fg3PctLeadersRow {
+pub struct Fg3PctLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub fg3_pct: f64,
@@ -189,7 +189,7 @@ pub struct Fg3PctLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct PfLeadersRow {
+pub struct PfLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub pf: f64,
@@ -199,7 +199,7 @@ pub struct PfLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct FtmLeadersRow {
+pub struct FtmLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub ftm: f64,
@@ -209,7 +209,7 @@ pub struct FtmLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct FtaLeadersRow {
+pub struct FtaLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub fta: f64,
@@ -219,7 +219,7 @@ pub struct FtaLeadersRow {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct FtPctLeadersRow {
+pub struct FtPctLeadersResultSet {
     pub player_id: i32,
     pub player_name: String,
     pub ft_pct: f64,

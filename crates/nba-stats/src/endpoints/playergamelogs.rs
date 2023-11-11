@@ -1,30 +1,33 @@
 use serde::{Deserialize, Serialize};
+use time::Date;
 
-use crate::Endpoint;
+use crate::{serde_utils, Endpoint};
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, Endpoint)]
 #[endpoint(path = "playergamelogs")]
 #[serde(deny_unknown_fields, rename_all = "PascalCase")]
-#[endpoint(row(field = player_game_logs, ty = "PlayerGameLogsRow", row = "PlayerGameLogs"))]
-pub struct Playergamelogs {
-    pub date_from: Option<()>,
-    pub date_to: Option<()>,
+#[endpoint(result_set(field = player_game_logs, ty = "PlayerGameLogsResultSet", name = "PlayerGameLogs"))]
+pub struct PlayerGameLogs {
+    #[serde(with = "serde_utils::date::option")]
+    pub date_from: Option<Date>,
+    #[serde(with = "serde_utils::date::option")]
+    pub date_to: Option<Date>,
     pub game_segment: Option<()>,
     pub ist_round: Option<()>,
-    pub last_n_games: i32,
-    pub league_id: String,
+    pub last_n_games: Option<()>,
+    pub league_id: Option<()>,
     pub location: Option<()>,
-    pub measure_type: String,
-    pub month: i32,
-    pub opp_team_id: i32,
+    pub measure_type: Option<()>,
+    pub month: Option<()>,
+    pub opp_team_id: Option<()>,
     pub outcome: Option<()>,
-    pub po_round: i32,
-    pub per_mode: String,
-    pub period: i32,
+    pub po_round: Option<()>,
+    pub per_mode: Option<()>,
+    pub period: Option<()>,
     pub player_id: Option<()>,
     pub season_segment: Option<()>,
-    pub season_type: String,
-    pub season_year: String,
+    pub season_type: Option<()>,
+    pub season_year: Option<()>,
     pub shot_clock_range: Option<()>,
     pub team_id: Option<()>,
     pub vs_conference: Option<()>,
@@ -33,7 +36,7 @@ pub struct Playergamelogs {
 
 #[derive(Clone, Debug, PartialEq, Deserialize, Serialize)]
 #[serde(deny_unknown_fields, rename_all = "SCREAMING_SNAKE_CASE")]
-pub struct PlayerGameLogsRow {
+pub struct PlayerGameLogsResultSet {
     pub season_year: String,
     pub player_id: i32,
     pub player_name: String,
@@ -102,4 +105,16 @@ pub struct PlayerGameLogsRow {
     pub td3_rank: i32,
     pub wnba_fantasy_pts_rank: i32,
     pub available_flag: i32,
+}
+
+#[cfg(test)]
+mod tests {
+    use claims::assert_ok;
+
+    use super::*;
+
+    #[tokio::test]
+    async fn works() {
+        println!("{:#?}", assert_ok!(PlayerGameLogs::default().send().await))
+    }
 }

@@ -26,6 +26,7 @@ reexport! {
     draft_pick;
     draft_year;
     experience;
+    game_id;
     half;
     height;
     last_n_games;
@@ -54,3 +55,35 @@ reexport! {
     weight;
     yes_or_no;
 }
+
+macro_rules! trait_param {
+    {$Trait:ident {
+        $($Ty:ty { $ResultSet:ident };)*
+    }} => {
+        #[::sealed::sealed]
+        pub trait $Trait:
+            ::serde::Serialize
+            + ::serde::de::DeserializeOwned
+            + ::std::fmt::Debug
+            + ::std::clone::Clone
+            + ::std::cmp::PartialEq
+            + ::std::cmp::Eq
+            + ::std::marker::Sync
+        {
+            type ResultSet: ::serde::Serialize
+                + ::serde::de::DeserializeOwned
+                + ::std::fmt::Debug
+                + ::std::clone::Clone
+                + ::std::cmp::PartialEq
+                + ::std::marker::Sync;
+        }
+
+        $(
+            #[::sealed::sealed]
+            impl $Trait for $Ty {
+                type ResultSet = $ResultSet;
+            }
+        )*
+    };
+}
+pub(crate) use trait_param;
