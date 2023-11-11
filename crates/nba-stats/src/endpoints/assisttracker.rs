@@ -54,6 +54,8 @@ mod tests {
     use claims::assert_ok;
 
     use super::*;
+
+    #[ignore = "don't want to spam the api"]
     #[tokio::test]
     async fn works() {
         println!("{:#?}", assert_ok!(AssistTracker::default().send().await));

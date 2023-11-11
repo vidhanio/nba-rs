@@ -233,16 +233,18 @@ mod tests {
 
     use super::*;
 
+    #[ignore = "don't want to spam the api"]
     #[tokio::test]
     async fn works() {
-        assert_ok!(
-            AllTimeLeadersGrids {
-                per_mode: PerMode::Totals,
-                top_x: 5,
-                ..Default::default()
-            }
-            .send()
-            .await
+        println!(
+            "{:#?}",
+            assert_ok!(
+                AllTimeLeadersGrids::default()
+                    .with_per_mode(PerMode::Totals)
+                    .with_top_x(15)
+                    .send()
+                    .await
+            )
         );
     }
 }

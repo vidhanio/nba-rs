@@ -132,13 +132,21 @@ mod tests {
 
     use super::*;
 
+    #[ignore = "don't want to spam the api"]
     #[tokio::test]
     async fn season_works() {
-        assert_ok!(LeagueLeaders::<Season>::default().send().await);
+        println!(
+            "{:#?}",
+            assert_ok!(LeagueLeaders::<Season>::default().send().await)
+        );
     }
 
+    #[ignore = "don't want to spam the api"]
     #[tokio::test]
     async fn all_time_works() {
-        assert_ok!(LeagueLeaders::<AllTime>::default().send().await);
+        println!(
+            "{:#?}",
+            assert_ok!(LeagueLeaders::<AllTime>::default().send().await)
+        );
     }
 }

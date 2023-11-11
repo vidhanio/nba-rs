@@ -113,6 +113,7 @@ mod tests {
 
     use super::*;
 
+    #[ignore = "don't want to spam the api"]
     #[tokio::test]
     async fn works() {
         println!("{:#?}", assert_ok!(PlayerGameLogs::default().send().await));

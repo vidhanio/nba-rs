@@ -55,6 +55,7 @@ mod tests {
 
     use super::*;
 
+    #[ignore = "don't want to spam the api"]
     #[tokio::test]
     async fn player_works() {
         println!(
@@ -63,6 +64,7 @@ mod tests {
         );
     }
 
+    #[ignore = "don't want to spam the api"]
     #[tokio::test]
     async fn team_works() {
         println!(

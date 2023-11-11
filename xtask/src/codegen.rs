@@ -120,7 +120,7 @@ impl Opts {
         }
 
         eprintln!("to test the endpoint, run:");
-        eprintln!("    cargo test -p nba-stats endpoints::{endpoint_path} -- --nocapture",);
+        eprintln!("    cargo test -p nba-stats endpoints::{endpoint_path} -- --include-ignored --nocapture",);
 
         Ok(())
     }
@@ -179,6 +179,7 @@ async fn generate(opts: Opts) -> color_eyre::Result<syn::File> {
 
             use super::*;
 
+            #[ignore = "don't want to spam the api"]
             #[tokio::test]
             async fn works() {
                 println!(
