@@ -1,6 +1,3 @@
-use serde::{self, de, ser::Error, Deserialize, Deserializer, Serialize, Serializer};
-use time::Date;
-
 const FORMAT: &[time::format_description::FormatItem<'static>] =
     time::macros::format_description!("[month]/[day]/[year]");
 
@@ -34,23 +31,4 @@ pub mod option {
             },
         )
     }
-}
-
-#[allow(clippy::trivially_copy_pass_by_ref)]
-pub fn serialize<S>(date: &Date, serializer: S) -> Result<S::Ok, S::Error>
-where
-    S: Serializer,
-{
-    date.format(FORMAT)
-        .map_err(S::Error::custom)?
-        .serialize(serializer)
-}
-
-pub fn deserialize<'de, D>(deserializer: D) -> Result<Date, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    let s = String::deserialize(deserializer)?;
-
-    Date::parse(&s, FORMAT).map_err(de::Error::custom)
 }

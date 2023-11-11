@@ -180,26 +180,3 @@ impl FromStr for TeamName {
         }
     }
 }
-
-mod as_tricode {
-    use serde::{de, Deserialize, Deserializer, Serializer};
-
-    use super::TeamName;
-
-    #[allow(clippy::trivially_copy_pass_by_ref)]
-    pub fn serialize<S>(team: &TeamName, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_str(team.abbreviation())
-    }
-
-    pub fn deserialize<'de, D>(deserializer: D) -> Result<TeamName, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let s = String::deserialize(deserializer)?;
-        s.parse()
-            .map_err(|()| de::Error::invalid_value(de::Unexpected::Str(&s), &"a tricode"))
-    }
-}
