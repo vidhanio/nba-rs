@@ -1,13 +1,5 @@
 //! The NBA live API.
 
-#![forbid(unsafe_code)]
-#![warn(clippy::pedantic)]
-#![warn(clippy::nursery)]
-#![warn(missing_debug_implementations)]
-#![warn(missing_copy_implementations)]
-#![allow(clippy::module_name_repetitions)]
-#![warn(missing_docs)]
-
 mod meta;
 pub mod playbyplay;
 mod serde;

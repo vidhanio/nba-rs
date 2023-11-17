@@ -1,8 +1,6 @@
 //! All possible fields which may be used in the request or response of a
 //! [`crate::stats::Endpoint`].
 
-#![allow(missing_docs)]
-
 macro_rules! reexport {
     {
         $($name:ident);* $(;)?

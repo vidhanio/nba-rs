@@ -145,7 +145,6 @@ pub enum ActionType {
 }
 
 mod action_types {
-    #![allow(missing_docs)]
 
     use serde::{Deserialize, Serialize};
 

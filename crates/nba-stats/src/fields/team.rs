@@ -2,6 +2,7 @@ use std::str::FromStr;
 
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
+#[allow(clippy::module_name_repetitions)]
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash, Serialize_repr, Deserialize_repr)]
 #[repr(u32)]
 pub enum TeamName {

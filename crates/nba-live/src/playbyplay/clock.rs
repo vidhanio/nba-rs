@@ -18,23 +18,23 @@ pub struct Clock {
 }
 
 impl std::str::FromStr for Clock {
-    type Err = ClockParseError;
+    type Err = ParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         // let re = regex!(r"PT(?P<minutes>\d{2})M(?P<seconds>\d{2}\.\d{2})S");
 
-        let (before, after) = s.split_once('M').ok_or(ClockParseError::MissingM)?;
+        let (before, after) = s.split_once('M').ok_or(ParseError::MissingM)?;
         let minutes = before
             .strip_prefix("PT")
-            .ok_or(ClockParseError::MissingPT)?
+            .ok_or(ParseError::MissingPT)?
             .parse::<u32>()
-            .map_err(ClockParseError::ParseMinutes)?;
+            .map_err(ParseError::ParseMinutes)?;
 
         let seconds = after
             .strip_suffix('S')
-            .ok_or(ClockParseError::MissingS)?
+            .ok_or(ParseError::MissingS)?
             .parse::<f64>()
-            .map_err(ClockParseError::ParseSeconds)?;
+            .map_err(ParseError::ParseSeconds)?;
 
         Ok(Self { minutes, seconds })
     }
@@ -61,7 +61,7 @@ impl<'de> Deserialize<'de> for Clock {
 }
 
 #[derive(Clone, Debug, Error, PartialEq, Eq)]
-pub enum ClockParseError {
+pub enum ParseError {
     #[error("missing `PT`")]
     MissingPT,
 
@@ -113,20 +113,20 @@ mod tests {
 
     #[test]
     fn clock_fails_parse() {
-        assert_err_eq!("PT00M00.00".parse::<Clock>(), ClockParseError::MissingS);
+        assert_err_eq!("PT00M00.00".parse::<Clock>(), ParseError::MissingS);
 
-        assert_err_eq!("PT0000.00S".parse::<Clock>(), ClockParseError::MissingM);
+        assert_err_eq!("PT0000.00S".parse::<Clock>(), ParseError::MissingM);
 
-        assert_err_eq!("00M00.00S".parse::<Clock>(), ClockParseError::MissingPT);
+        assert_err_eq!("00M00.00S".parse::<Clock>(), ParseError::MissingPT);
 
         assert_matches!(
             "PT00.1M00.00S".parse::<Clock>(),
-            Err(ClockParseError::ParseMinutes(_))
+            Err(ParseError::ParseMinutes(_))
         );
 
         assert_matches!(
             "PT00M00.2.0S".parse::<Clock>(),
-            Err(ClockParseError::ParseSeconds(_))
+            Err(ParseError::ParseSeconds(_))
         );
     }
 }

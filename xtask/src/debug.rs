@@ -23,10 +23,7 @@ impl Opts {
         let (ext, contents) = match self.type_ {
             ResponseType::Basic => ("rs", format!("{:#?}", self.endpoint.send_basic().await?)),
             ResponseType::Map => ("rs", format!("{:#?}", self.endpoint.send().await?)),
-            ResponseType::Json => (
-                "json",
-                self.endpoint.send_raw().await?.text().await?.to_string(),
-            ),
+            ResponseType::Json => ("json", self.endpoint.send_raw().await?.text().await?),
         };
 
         let temp_dir = env::temp_dir();

@@ -1,6 +1,3 @@
-#![allow(missing_docs)]
-#![allow(clippy::missing_errors_doc)]
-
 use serde::{Serialize, Serializer};
 
 pub mod date;

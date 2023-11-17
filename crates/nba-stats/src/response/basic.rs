@@ -1,3 +1,5 @@
+#![allow(clippy::module_name_repetitions)]
+
 use serde::{Deserialize, Serialize};
 
 use crate::{serde_utils::one_or_many::OneOrMany, Response};

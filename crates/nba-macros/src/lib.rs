@@ -26,7 +26,7 @@ struct ResultSet {
 
 impl ToTokens for EndpointOpts {
     fn to_tokens(&self, tokens: &mut TokenStream2) {
-        let EndpointOpts {
+        let Self {
             ident,
             generics,
             data,
@@ -103,12 +103,10 @@ impl ToTokens for EndpointOpts {
 
         quote::quote! {
             #builder_impl
-
             #endpoint_impl
-
             #result_sets
         }
-        .to_tokens(tokens)
+        .to_tokens(tokens);
     }
 }
 

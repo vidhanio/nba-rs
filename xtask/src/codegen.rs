@@ -69,7 +69,7 @@ impl From<&JsonType> for Type {
             JsonType::Array => parse_quote! { Vec<serde_json::Value> },
             JsonType::Object => parse_quote! { serde_json::Map<String, serde_json::Value> },
             JsonType::Optional(ty) => {
-                let ty = Type::from(&**ty);
+                let ty = Self::from(&**ty);
                 parse_quote! { Option<#ty> }
             }
         }
@@ -78,7 +78,7 @@ impl From<&JsonType> for Type {
 
 impl ToTokens for JsonType {
     fn to_tokens(&self, tokens: &mut TokenStream) {
-        Type::from(self).to_tokens(tokens)
+        Type::from(self).to_tokens(tokens);
     }
 }
 

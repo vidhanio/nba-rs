@@ -1,13 +1,5 @@
 //! A crate for the NBA Stats API.
 
-#![forbid(unsafe_code)]
-#![warn(clippy::pedantic)]
-#![warn(clippy::nursery)]
-#![warn(missing_debug_implementations)]
-#![warn(missing_copy_implementations)]
-#![allow(clippy::module_name_repetitions)]
-// #![warn(missing_docs)]
-
 use std::time::Duration;
 
 use once_cell::sync::Lazy;

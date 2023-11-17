@@ -17,28 +17,28 @@ impl<T> OneOrMany<T> {
         }
     }
 
-    pub fn iter(&self) -> OneOrManyIter<'_, T> {
+    pub fn iter(&self) -> Iter<'_, T> {
         match self {
-            Self::Many(v) => OneOrManyIter::Many(v.iter()),
-            Self::One(s) => OneOrManyIter::One(iter::once(s)),
+            Self::Many(v) => Iter::Many(v.iter()),
+            Self::One(s) => Iter::One(iter::once(s)),
         }
     }
 }
 
 impl<T> IntoIterator for OneOrMany<T> {
-    type IntoIter = OneOrManyIntoIter<T>;
+    type IntoIter = IntoIter<T>;
     type Item = T;
 
     fn into_iter(self) -> Self::IntoIter {
         match self {
-            Self::Many(v) => OneOrManyIntoIter::Many(v.into_iter()),
-            Self::One(s) => OneOrManyIntoIter::One(iter::once(s)),
+            Self::Many(v) => IntoIter::Many(v.into_iter()),
+            Self::One(s) => IntoIter::One(iter::once(s)),
         }
     }
 }
 
 impl<'a, T> IntoIterator for &'a OneOrMany<T> {
-    type IntoIter = OneOrManyIter<'a, T>;
+    type IntoIter = Iter<'a, T>;
     type Item = &'a T;
 
     fn into_iter(self) -> Self::IntoIter {
@@ -68,12 +68,12 @@ impl<T> From<OneOrMany<T>> for Vec<T> {
 }
 
 #[derive(Clone, Debug)]
-pub enum OneOrManyIntoIter<T> {
+pub enum IntoIter<T> {
     One(iter::Once<T>),
     Many(vec::IntoIter<T>),
 }
 
-impl<T> Iterator for OneOrManyIntoIter<T> {
+impl<T> Iterator for IntoIter<T> {
     type Item = T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -91,7 +91,7 @@ impl<T> Iterator for OneOrManyIntoIter<T> {
     }
 }
 
-impl<T> ExactSizeIterator for OneOrManyIntoIter<T> {
+impl<T> ExactSizeIterator for IntoIter<T> {
     fn len(&self) -> usize {
         match self {
             Self::Many(v) => v.len(),
@@ -101,12 +101,12 @@ impl<T> ExactSizeIterator for OneOrManyIntoIter<T> {
 }
 
 #[derive(Clone, Debug)]
-pub enum OneOrManyIter<'a, T> {
+pub enum Iter<'a, T> {
     One(iter::Once<&'a T>),
     Many(std::slice::Iter<'a, T>),
 }
 
-impl<'a, T> Iterator for OneOrManyIter<'a, T> {
+impl<'a, T> Iterator for Iter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -124,7 +124,7 @@ impl<'a, T> Iterator for OneOrManyIter<'a, T> {
     }
 }
 
-impl<'a, T> ExactSizeIterator for OneOrManyIter<'a, T> {
+impl<'a, T> ExactSizeIterator for Iter<'a, T> {
     fn len(&self) -> usize {
         match self {
             Self::Many(v) => v.len(),
