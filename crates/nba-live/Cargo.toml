@@ -13,7 +13,7 @@ version.workspace = true
 workspace = true
 
 [dependencies]
-http-serde = "1"
+http-serde = "2"
 reqwest.workspace = true
 serde.workspace = true
 serde_json.workspace = true
